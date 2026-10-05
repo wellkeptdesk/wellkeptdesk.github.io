@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Clock · WellKeptDesk</title>
+<style>
+  :root { --time: #37352F; --date: #8A847C; --arch: #A8A2B7; }
+  @media (prefers-color-scheme: dark) {
+    :root { --time: #E8E5DF; --date: #A19B93; --arch: #9690AB; }
+  }
+  html, body { margin: 0; padding: 0; height: 100%; background: transparent; }
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  .clock {
+    box-sizing: border-box; height: 100%;
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 2px;
+  }
+  .arch { flex: none; width: 18px; height: 32px; }
+  .arch path { fill: none; stroke: var(--arch); stroke-width: 1.6; stroke-linecap: round; }
+  .text { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; }
+  .time {
+    color: var(--time);
+    font-size: clamp(20px, 12.5vw, 30px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ampm {
+    font-size: 0.4em; font-weight: 600; letter-spacing: 0.06em;
+    margin-left: 0.25em; color: var(--date);
+  }
+  .date {
+    color: var(--date);
+    font-size: 13px; font-weight: 500;
+    margin-top: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+</style>
+</head>
+<body>
+  <div class="clock" aria-live="off">
+    <svg class="arch" viewBox="0 0 18 32" aria-hidden="true"><path d="M2 31 V10 A7 7 0 0 1 16 10 V31"/></svg>
+    <div class="text">
+      <div class="time"><span id="t">--:--</span><span class="ampm" id="ap"></span></div>
+      <div class="date" id="d">&nbsp;</div>
+    </div>
+  </div>
+<script>
+(function () {
+  // English words always; 12- or 24-hour clock follows the viewer's own locale.
+  var userLang = navigator.language || 'en-US';
+  var cycle = '';
+  try { cycle = new Intl.DateTimeFormat(userLang, { hour: 'numeric' }).resolvedOptions().hourCycle || ''; } catch (e) {}
+  var q = location.search;
+  var h24 = /[?&](24|h24)\b/.test(q) ? true : /[?&](12|h12)\b/.test(q) ? false : (cycle === 'h23' || cycle === 'h24');
+  var lang = /^en/i.test(userLang) ? userLang : (h24 ? 'en-GB' : 'en-US');
+  var timeFmt = new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit', hour12: !h24 });
+  var dateFmt = new Intl.DateTimeFormat(lang, { weekday: 'long', month: 'long', day: 'numeric' });
+  var tEl = document.getElementById('t'), apEl = document.getElementById('ap'), dEl = document.getElementById('d');
+  var last = '';
+  function tick() {
+    var now = new Date();
+    var main = '', ap = '';
+    timeFmt.formatToParts(now).forEach(function (p) {
+      if (p.type === 'dayPeriod') ap = p.value.replace(/\./g, '').toUpperCase();
+      else if (p.type !== 'literal' || ap === '') main += p.value;
+    });
+    main = main.trim();
+    var key = main + ap + now.getDate();
+    if (key === last) return;
+    last = key;
+    tEl.textContent = main;
+    apEl.textContent = ap;
+    dEl.textContent = dateFmt.format(now);
+  }
+  tick();
+  setInterval(tick, 1000);
+  document.addEventListener('visibilitychange', tick);
+})();
+</script>
+</body>
+</html>
