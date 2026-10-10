@@ -7,10 +7,10 @@
 <meta name="robots" content="noindex">
 <title>Focus timer · WellKeptDesk</title>
 <style>
-  :root { --ink: #4A4742; --muted: #8E877D; --line: #A29B90; --track: #E3DED3; --tile: #F0EDE6; --btn: #4A4742; --btnt: #fff; }
-  @media (prefers-color-scheme: dark) { :root { --ink: #ECE9E2; --muted: #A8A196; --line: #B9B1A4; --track: #3D3A36; --tile: #2C2A27; --btn: #ECE9E2; --btnt: #242220; } }
-  html[data-theme="light"] { --ink:#4A4742; --muted:#8E877D; --line:#A29B90; --track:#E3DED3; --tile:#F0EDE6; --btn:#4A4742; --btnt:#fff; }
-  html[data-theme="dark"]  { --ink:#ECE9E2; --muted:#A8A196; --line:#B9B1A4; --track:#3D3A36; --tile:#2C2A27; --btn:#ECE9E2; --btnt:#242220; }
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; }
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
   body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
   .wrap { height: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 0 2px; }
@@ -20,7 +20,8 @@
   .col { display: flex; flex-direction: column; min-width: 0; }
   .big { color: var(--ink); font-size: 32px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
   .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin: 3px 0 7px; }
-  .btns { display: flex; gap: 6px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 6px; }
+  @media (max-width: 170px) { .arch { width: 36px; height: 50px; } .big { font-size: 24px; } }
   button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
   button.g { background: var(--tile); color: var(--ink); }
   button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
