@@ -7,73 +7,10 @@
 <meta name="robots" content="noindex">
 <title>Countdown · WellKeptDesk</title>
 <style>
-  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; }
-  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; } }
-  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; }
-  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; }
-  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
-  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-  .wrap { height: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 0 2px; }
-  .arch { flex: none; width: 52px; height: 72px; }
-  .arch path { fill: none; stroke-width: 5; stroke-linecap: round; }
-  .arch .tr { stroke: var(--track); }
-  .arch .fg { stroke: var(--line); transition: stroke-dashoffset 1s ease; }
-  .col { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
-  .big { color: var(--ink); font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
-  .l1 { color: var(--ink); font-size: 13px; font-weight: 600; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <svg class="arch" viewBox="0 0 52 72" aria-hidden="true">
-    <path class="tr" d="M6 68 V26 A20 20 0 0 1 46 26 V68" pathLength="100"/>
-    <path class="fg" id="fg" d="M6 68 V26 A20 20 0 0 1 46 26 V68" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
-  </svg>
-  <div class="col"><div class="big" id="big">--</div><div class="l1" id="l1">&nbsp;</div><div class="l2" id="l2">&nbsp;</div></div>
-</div>
-<script>
-(function () {
-  var q = new URLSearchParams(location.search);
-  var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
-  var $ = function (id) { return document.getElementById(id); };
-  function arch(p) { $('fg').style.strokeDashoffset = String(100 - Math.max(0, Math.min(100, p))); }
-  var DAY = 864e5;
-  var label = (q.get('label') || 'Countdown').slice(0, 40);
-  var start = q.get('start');
-  function parse(s) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
-  var target = parse(q.get('date'));
-  var from = parse(start);
-  function run() {
-    if (!target) { $('big').textContent = '--'; $('l1').textContent = 'Add ?date=YYYY-MM-DD'; $('l2').textContent = 'and optionally &label=Trip'; return; }
-    var n = new Date(), t0 = new Date(n.getFullYear(), n.getMonth(), n.getDate());
-    var d = Math.round((target - t0) / DAY);
-    var d0 = from || new Date(target.getFullYear() - 1, target.getMonth(), target.getDate());
-    var pct = Math.max(0, Math.min(100, (t0 - d0) / (target - d0) * 100));
-    if (d > 0) { $('big').innerHTML = d + '<small>' + (d === 1 ? 'day' : 'days') + '</small>'; $('l2').textContent = 'until ' + target.toLocaleDateString(navigator.language || 'en-US', { month: 'long', day: 'numeric', year: 'numeric' }); arch(pct); }
-    else if (d === 0) { $('big').textContent = 'Today'; $('l2').textContent = 'The day is here'; arch(100); }
-    else { $('big').innerHTML = Math.abs(d) + '<small>' + (d === -1 ? 'day ago' : 'days ago') + '</small>'; $('l2').textContent = target.toLocaleDateString(navigator.language || 'en-US', { month: 'long', day: 'numeric', year: 'numeric' }); arch(100); }
-    $('l1').textContent = label;
-  }
-  run(); setInterval(run, 60 * 1000);
-})();
-</script>
-</body>
-</html>
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="robots" content="noindex">
-<title>Countdown · WellKeptDesk</title>
-<style>
-  :root { --ink: #4B4561; --muted: #8A847C; --line: #9B93B3; --track: #E4E0EC; --tile: #F1EEF5; }
-  @media (prefers-color-scheme: dark) { :root { --ink: #E9E5F2; --muted: #A19B93; --line: #A79FC4; --track: #3A3745; --tile: #2B2935; } }
-  html[data-theme="light"] { --ink:#4B4561; --muted:#8A847C; --line:#9B93B3; --track:#E4E0EC; --tile:#F1EEF5; }
-  html[data-theme="dark"]  { --ink:#E9E5F2; --muted:#A19B93; --line:#A79FC4; --track:#3A3745; --tile:#2B2935; }
+  :root { --ink: #4A4742; --muted: #8E877D; --line: #A29B90; --track: #E3DED3; --tile: #F0EDE6; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECE9E2; --muted: #A8A196; --line: #B9B1A4; --track: #3D3A36; --tile: #2C2A27; } }
+  html[data-theme="light"] { --ink:#4A4742; --muted:#8E877D; --line:#A29B90; --track:#E3DED3; --tile:#F0EDE6; }
+  html[data-theme="dark"]  { --ink:#ECE9E2; --muted:#A8A196; --line:#B9B1A4; --track:#3D3A36; --tile:#2C2A27; }
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
   body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
   .wrap { height: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 0 2px; }
