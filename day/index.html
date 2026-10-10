@@ -32,4 +32,29 @@
 <div class="wrap">
   <div class="top"><div class="big" id="big">--</div><div class="when"><span class="dl">Day</span><span class="tm" id="when">&nbsp;</span></div></div>
   <div class="row"><span class="lab">Week</span><div class="bar"><i id="bw"></i></div><span class="val" id="vw"></span></div>
-  <div
+  <div class="row"><span class="lab">Month</span><div class="bar"><i id="bm"></i></div><span class="val" id="vm"></span></div>
+</div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (id) { return document.getElementById(id); };
+  var D = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  function set(b, v, p) { $(b).style.width = p + '%'; $(v).textContent = Math.floor(p) + '%'; }
+  function run() {
+    var n = new Date(), y = n.getFullYear(), m = n.getMonth(), d = n.getDate();
+    var start = new Date(y, m, d), pd = (n - start) / 864e5 * 100;
+    var wd = (n.getDay() + 6) % 7;                      // Monday = 0
+    var pw = (wd + pd / 100) / 7 * 100;
+    var dim = new Date(y, m + 1, 0).getDate();
+    var pm = (d - 1 + pd / 100) / dim * 100;
+    var hh = n.getHours(), mm = n.getMinutes();
+    $('big').innerHTML = Math.floor(pd) + '<small>%</small>';
+    $('when').textContent = D[n.getDay()] + ' · ' + (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+    set('bw', 'vw', pw); set('bm', 'vm', pm);
+  }
+  run(); setInterval(run, 30 * 1000);
+})();
+</script>
+</body>
+</html>
