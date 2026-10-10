@@ -8,119 +8,15 @@
 <title>Clock · WellKeptDesk</title>
 <style>
   :root {
-    --tile: #F4F2EE; --tile2: #E7E5DF; --digit: #2F3332; --hinge: rgba(47,51,50,.14);
-    --muted: #7C8279; --accent: #6B8071; --shadow: 0 1px 0 rgba(47,51,50,.06), 0 6px 14px -8px rgba(47,51,50,.35);
+    --tile: #F0EDE6; --tile2: #E3DED3; --digit: #4A4742; --hinge: rgba(74,71,66,.14);
+    --muted: #8E877D; --accent: #A29B90; --shadow: 0 1px 0 rgba(74,71,66,.06), 0 6px 14px -8px rgba(74,71,66,.35);
   }
   @media (prefers-color-scheme: dark) {
-    :root { --tile: #2A2E2C; --tile2: #222624; --digit: #ECEBE6; --hinge: rgba(0,0,0,.45);
-            --muted: #A3A89F; --accent: #9DAE9F; --shadow: 0 1px 0 rgba(255,255,255,.04), 0 6px 14px -8px rgba(0,0,0,.8); }
+    :root { --tile: #2C2A27; --tile2: #242220; --digit: #ECE9E2; --hinge: rgba(0,0,0,.45);
+            --muted: #A8A196; --accent: #B9B1A4; --shadow: 0 1px 0 rgba(255,255,255,.04), 0 6px 14px -8px rgba(0,0,0,.8); }
   }
-  html[data-theme="light"] { --tile:#F4F2EE; --tile2:#E7E5DF; --digit:#2F3332; --hinge:rgba(47,51,50,.14); --muted:#7C8279; --accent:#6B8071; }
-  html[data-theme="dark"]  { --tile:#2A2E2C; --tile2:#222624; --digit:#ECEBE6; --hinge:rgba(0,0,0,.45); --muted:#A3A89F; --accent:#9DAE9F; }
-  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
-  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 7px; padding: 0 2px; }
-  .row { display: flex; align-items: center; gap: 6px; }
-  .dots { display: flex; flex-direction: column; gap: 9px; }
-  .dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); opacity: .85; display: block; }
-  .unit { position: relative; width: 50px; height: 60px; perspective: 300px; font-variant-numeric: tabular-nums; }
-  .half { position: absolute; left: 0; width: 100%; height: 50%; overflow: hidden; background: var(--tile); color: var(--digit);
-          box-shadow: var(--shadow); backface-visibility: hidden; }
-  .half span { position: absolute; left: 0; width: 100%; height: 200%; display: flex; align-items: center; justify-content: center;
-               font-size: 38px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
-  .top { top: 0; border-radius: 9px 9px 2px 2px; background: linear-gradient(var(--tile), var(--tile2)); }
-  .top span { top: 0; }
-  .bot { bottom: 0; border-radius: 2px 2px 9px 9px; background: linear-gradient(var(--tile2), var(--tile)); }
-  .bot span { bottom: 0; }
-  .flap { transform-origin: bottom; }
-  .flapb { transform-origin: top; }
-  .unit::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--hinge); z-index: 5; }
-  .go .flap  { animation: fold .32s ease-in forwards; z-index: 3; }
-  .go .flapb { animation: unfold .32s ease-out .32s backwards; z-index: 3; }
-  @keyframes fold   { from { transform: rotateX(0); } to { transform: rotateX(-90deg); } }
-  @keyframes unfold { from { transform: rotateX(90deg); } to { transform: rotateX(0); } }
-  .side { margin-left: 4px; display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
-  .ap { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
-  .sec { font-size: 11px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
-  .date { font-size: 12.5px; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 1px; }
-  @media (prefers-reduced-motion: reduce) { .go .flap, .go .flapb { animation: none; } }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="row">
-    <div class="unit" id="u0"></div>
-    <div class="dots"><i></i><i></i></div>
-    <div class="unit" id="u1"></div>
-    <div class="side"><span class="ap" id="ap"></span><span class="sec" id="sec"></span></div>
-  </div>
-  <div class="date" id="d">&nbsp;</div>
-</div>
-<script>
-(function () {
-  var q = new URLSearchParams(location.search);
-  var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
-  var userLang = navigator.language || 'en-US', tz = q.get('tz') || undefined;
-  var cycle = ''; try { cycle = new Intl.DateTimeFormat(userLang, { hour: 'numeric' }).resolvedOptions().hourCycle || ''; } catch (e) {}
-  var h24 = q.has('24') || q.has('h24') ? true : (q.has('12') || q.has('h12')) ? false : (cycle === 'h23' || cycle === 'h24');
-  var lang = /^en/i.test(userLang) ? userLang : (h24 ? 'en-GB' : 'en-US');
-  var showSec = !q.has('nosec');
-  var fmt, dfmt;
-  try {
-    fmt = new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit', second: '2-digit', hourCycle: h24 ? 'h23' : 'h12', timeZone: tz });
-    dfmt = new Intl.DateTimeFormat(lang, { weekday: 'long', month: 'long', day: 'numeric', timeZone: tz });
-  } catch (e) { fmt = new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit', second: '2-digit', hourCycle: h24 ? 'h23' : 'h12' }); dfmt = new Intl.DateTimeFormat(lang, { weekday: 'long', month: 'long', day: 'numeric' }); }
-  function build(el) {
-    el.innerHTML = '<div class="half top"><span class="a">0</span></div><div class="half bot"><span class="b">0</span></div>' +
-      '<div class="half top flap"><span class="c">0</span></div><div class="half bot flapb"><span class="d">0</span></div>';
-    return { el: el, v: null, a: el.querySelector('.a'), b: el.querySelector('.b'), c: el.querySelector('.c'), d: el.querySelector('.d') };
-  }
-  function set(u, v) {
-    if (u.v === v) return;
-    if (u.v === null) { u.a.textContent = u.b.textContent = u.c.textContent = u.d.textContent = v; u.v = v; return; }
-    u.c.textContent = u.v; u.d.textContent = v; u.a.textContent = v; u.b.textContent = u.v;
-    u.el.classList.remove('go'); void u.el.offsetWidth; u.el.classList.add('go');
-    u.v = v;
-    setTimeout(function () { u.b.textContent = v; u.c.textContent = v; }, 640);
-  }
-  var u0 = build(document.getElementById('u0')), u1 = build(document.getElementById('u1'));
-  var apEl = document.getElementById('ap'), secEl = document.getElementById('sec'), dEl = document.getElementById('d'), lastD = '';
-  function tick() {
-    var now = new Date(), h = '', m = '', s = '', ap = '';
-    fmt.formatToParts(now).forEach(function (p) {
-      if (p.type === 'hour') h = p.value; else if (p.type === 'minute') m = p.value;
-      else if (p.type === 'second') s = p.value; else if (p.type === 'dayPeriod') ap = p.value.replace(/\./g, '').toUpperCase();
-    });
-    if (h.length < 2) h = '0' + h;
-    set(u0, h); set(u1, m);
-    apEl.textContent = ap; if (showSec) secEl.textContent = s;
-    var ds = dfmt.format(now); if (ds !== lastD) { dEl.textContent = ds; lastD = ds; }
-  }
-  tick(); setInterval(tick, 1000);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) tick(); });
-})();
-</script>
-</body>
-</html>
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="robots" content="noindex">
-<title>Clock · WellKeptDesk</title>
-<style>
-  :root {
-    --tile: #F1EEF5; --tile2: #E8E4EF; --digit: #4B4561; --hinge: rgba(75,69,97,.14);
-    --muted: #8A847C; --accent: #9B93B3; --shadow: 0 1px 0 rgba(75,69,97,.06), 0 6px 14px -8px rgba(75,69,97,.35);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --tile: #2B2935; --tile2: #24222D; --digit: #E9E5F2; --hinge: rgba(0,0,0,.45);
-            --muted: #A19B93; --accent: #8C84A6; --shadow: 0 1px 0 rgba(255,255,255,.04), 0 6px 14px -8px rgba(0,0,0,.8); }
-  }
-  html[data-theme="light"] { --tile:#F1EEF5; --tile2:#E8E4EF; --digit:#4B4561; --hinge:rgba(75,69,97,.14); --muted:#8A847C; --accent:#9B93B3; }
-  html[data-theme="dark"]  { --tile:#2B2935; --tile2:#24222D; --digit:#E9E5F2; --hinge:rgba(0,0,0,.45); --muted:#A19B93; --accent:#8C84A6; }
+  html[data-theme="light"] { --tile:#F0EDE6; --tile2:#E3DED3; --digit:#4A4742; --hinge:rgba(74,71,66,.14); --muted:#8E877D; --accent:#A29B90; }
+  html[data-theme="dark"]  { --tile:#2C2A27; --tile2:#242220; --digit:#ECE9E2; --hinge:rgba(0,0,0,.45); --muted:#A8A196; --accent:#B9B1A4; }
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
   body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
   .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 7px; padding: 0 2px; }
