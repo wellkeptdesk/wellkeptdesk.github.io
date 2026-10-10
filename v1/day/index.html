@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Day progress · WellKeptDesk</title>
+<style>
+  :root { --ink: #4A4742; --muted: #8E877D; --line: #A29B90; --track: #E3DED3; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECE9E2; --muted: #A8A196; --line: #B9B1A4; --track: #3D3A36; } }
+  html[data-theme="light"] { --ink:#4A4742; --muted:#8E877D; --line:#A29B90; --track:#E3DED3; }
+  html[data-theme="dark"]  { --ink:#ECE9E2; --muted:#A8A196; --line:#B9B1A4; --track:#3D3A36; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 0 2px; }
+  .top { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .big { color: var(--ink); font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 3px; letter-spacing: 0; }
+  .when { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .dl { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .tm { color: var(--ink); font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 8px; }
+  .lab { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .bar { height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: var(--line); transition: width 1s ease; }
+  .val { color: var(--muted); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 28px; text-align: right; }
+  @media (max-width: 230px) { .tm { display: none; } .row { grid-template-columns: 44px 1fr auto; gap: 6px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="big" id="big">--</div><div class="when"><span class="dl">Day</span><span class="tm" id="when">&nbsp;</span></div></div>
+  <div class="row"><span class="lab">Week</span><div class="bar"><i id="bw"></i></div><span class="val" id="vw"></span></div>
+  <div class="row"><span class="lab">Month</span><div class="bar"><i id="bm"></i></div><span class="val" id="vm"></span></div>
+</div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (id) { return document.getElementById(id); };
+  var D = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  function set(b, v, p) { $(b).style.width = p + '%'; $(v).textContent = Math.floor(p) + '%'; }
+  function run() {
+    var n = new Date(), y = n.getFullYear(), m = n.getMonth(), d = n.getDate();
+    var start = new Date(y, m, d), pd = (n - start) / 864e5 * 100;
+    var wd = (n.getDay() + 6) % 7;                      // Monday = 0
+    var pw = (wd + pd / 100) / 7 * 100;
+    var dim = new Date(y, m + 1, 0).getDate();
+    var pm = (d - 1 + pd / 100) / dim * 100;
+    var hh = n.getHours(), mm = n.getMinutes();
+    $('big').innerHTML = Math.floor(pd) + '<small>%</small>';
+    $('when').textContent = D[n.getDay()] + ' · ' + (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+    set('bw', 'vw', pw); set('bm', 'vm', pm);
+  }
+  run(); setInterval(run, 30 * 1000);
+})();
+</script>
+</body>
+</html>
