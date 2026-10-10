@@ -7,6 +7,81 @@
 <meta name="robots" content="noindex">
 <title>Moon and sun · WellKeptDesk</title>
 <style>
+  :root { --ink: #2F3332; --muted: #7C8279; --lit: #6B8071; --dark: #E7E5DF; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --lit: #CBD3C8; --dark: #3A3F3C; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --lit:#6B8071; --dark:#E7E5DF; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --lit:#CBD3C8; --dark:#3A3F3C; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 0 2px; }
+  .moon { flex: none; width: 56px; height: 56px; }
+  .col { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+  .big { color: var(--ink); font-size: 17px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .l1 { color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .l2 { color: var(--ink); font-size: 12.5px; font-weight: 600; margin-top: 5px; white-space: nowrap; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 260px) { .moon { width: 40px; height: 40px; } .big { font-size: 15px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <svg class="moon" viewBox="0 0 56 56" aria-hidden="true">
+    <circle cx="28" cy="28" r="24" fill="var(--dark)"/>
+    <path id="lit" d="" fill="var(--lit)"/>
+  </svg>
+  <div class="col"><div class="big" id="big">--</div><div class="l1" id="l1">&nbsp;</div><div class="l2" id="l2">&nbsp;</div></div>
+</div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (id) { return document.getElementById(id); };
+  var SYN = 29.530588853, REF = Date.UTC(2000, 0, 6, 18, 14);
+  var NAMES = ['New moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full moon', 'Waning gibbous', 'Last quarter', 'Waning crescent'];
+  function moon() {
+    var age = (((Date.now() - REF) / 864e5) % SYN + SYN) % SYN;
+    var f = age / SYN, ill = (1 - Math.cos(2 * Math.PI * f)) / 2;
+    var name = NAMES[Math.floor(f * 8 + 0.5) % 8];
+    var r = 24, cx = 28, cy = 28, waxing = f < 0.5;
+    var k = Math.cos(2 * Math.PI * f);
+    var rx = Math.abs(k) * r;
+    var limb = waxing ? 1 : 0;
+    var d = 'M' + cx + ' ' + (cy - r) + ' A' + r + ' ' + r + ' 0 0 ' + limb + ' ' + cx + ' ' + (cy + r) +
+            ' A' + rx.toFixed(2) + ' ' + r + ' 0 0 ' + (k > 0 ? 1 - limb : limb) + ' ' + cx + ' ' + (cy - r) + 'Z';
+    $('lit').setAttribute('d', d);
+    $('big').textContent = name;
+    $('l1').textContent = Math.round(ill * 100) + '% lit · day ' + (Math.floor(age) + 1) + ' of ' + Math.round(SYN);
+  }
+  function hm(s) { return s.slice(11, 16); }
+  function guessCity() {
+    try { var z = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; var n = z.split('/').pop().replace(/_/g, ' '); if (n && n !== 'UTC') return n; } catch (e) {}
+    return 'London';
+  }
+  var city = (q.get('city') || '').trim() || guessCity();
+  function sun() {
+    fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&name=' + encodeURIComponent(city))
+      .then(function (r) { return r.json(); })
+      .then(function (g) {
+        if (!g.results || !g.results.length) throw 0;
+        var r = g.results[0];
+        return fetch('https://api.open-meteo.com/v1/forecast?latitude=' + r.latitude + '&longitude=' + r.longitude + '&daily=sunrise,sunset&forecast_days=1&timezone=auto')
+          .then(function (x) { return x.json(); })
+          .then(function (d) { $('l2').textContent = '↑ ' + hm(d.daily.sunrise[0]) + '   ↓ ' + hm(d.daily.sunset[0]) + ' · ' + r.name; });
+      }).catch(function () { $('l2').textContent = ''; });
+  }
+  moon(); sun(); setInterval(moon, 30 * 60 * 1000); setInterval(sun, 3 * 3600 * 1000);
+})();
+</script>
+</body>
+</html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Moon and sun · WellKeptDesk</title>
+<style>
   :root { --ink: #4B4561; --muted: #8A847C; --lit: #9B93B3; --dark: #E4E0EC; }
   @media (prefers-color-scheme: dark) { :root { --ink: #E9E5F2; --muted: #A19B93; --lit: #CFC8E6; --dark: #3A3745; } }
   html[data-theme="light"] { --ink:#4B4561; --muted:#8A847C; --lit:#9B93B3; --dark:#E4E0EC; }
