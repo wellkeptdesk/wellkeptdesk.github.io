@@ -23,6 +23,14 @@
   .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
   .l1 { color: var(--ink); font-size: 13px; font-weight: 600; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .l2 { color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 260px) {
+    .wrap { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto auto; column-gap: 10px; align-content: center; padding: 0 2px; }
+    .col { display: contents; }
+    .arch { grid-row: 1 / span 1; width: 36px; height: 50px; }
+    .big { grid-column: 2; align-self: center; font-size: 28px; }
+    .l1 { grid-column: 1 / -1; margin-top: 6px; }
+    .l2 { grid-column: 1 / -1; }
+  }
 </style>
 </head>
 <body>
