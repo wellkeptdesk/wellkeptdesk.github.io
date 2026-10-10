@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Widget settings · WellKeptDesk</title>
+<style>
+  :root { --bg:#F2EEE6; --card:#FAF8F3; --ink:#4A4742; --muted:#8E877D; --line:#D3CCC0; --accent:#6C6582; --ok:#6B8071; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#262522; --card:#2F2D2A; --ink:#ECE9E2; --muted:#A8A196; --line:#4A463F; --accent:#B7B0D0; --ok:#9DAE9F; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  main { max-width:760px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font:600 28px/1.15 Georgia,"Iowan Old Style",serif; margin:0 0 6px; text-wrap:balance; }
+  p.lead { color:var(--muted); margin:0 0 24px; max-width:60ch; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:28px; }
+  label { display:flex; flex-direction:column; gap:6px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600; min-width:0; }
+  input, select { font:15px/1.2 inherit; font-family:inherit; letter-spacing:0; text-transform:none; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-width:0; width:100%; }
+  input:focus, select:focus { outline:2px solid var(--accent); outline-offset:1px; }
+  .list { display:flex; flex-direction:column; gap:12px; }
+  .row { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; display:grid; grid-template-columns:1fr auto; gap:6px 12px; align-items:center; min-width:0; }
+  .row h2 { margin:0; font-size:15px; font-weight:600; }
+  .row small { grid-column:1; color:var(--muted); }
+  .url { grid-column:1 / -1; font:12px/1.4 ui-monospace,Menlo,Consolas,monospace; color:var(--muted); background:var(--bg); border-radius:8px; padding:8px 10px; overflow-wrap:anywhere; user-select:all; }
+  button { font:600 13px/1 inherit; font-family:inherit; border:0; border-radius:999px; padding:9px 16px; cursor:pointer; background:var(--ink); color:var(--bg); }
+  button.done { background:var(--ok); }
+  .how { margin-top:28px; padding:16px; border:1px dashed var(--line); border-radius:14px; color:var(--muted); }
+  .how ol { margin:8px 0 0; padding-left:20px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Make the widgets yours</h1>
+  <p class="lead">Pick your settings, copy a link, and paste it into the matching widget in Notion. Nothing is stored; the settings live inside the link.</p>
+
+  <div class="grid">
+    <label>City (weather and sky)<input id="city" placeholder="e.g. London" autocomplete="off"></label>
+    <label>Temperature<select id="unit"><option value="">Celsius</option><option value="f">Fahrenheit</option></select></label>
+    <label>Focus minutes<input id="work" type="number" min="1" max="180" placeholder="25"></label>
+    <label>Break minutes<input id="brk" type="number" min="1" max="60" placeholder="5"></label>
+    <label>Countdown date<input id="date" type="date"></label>
+    <label>Countdown label<input id="label" placeholder="e.g. New Year" maxlength="24"></label>
+    <label>Theme<select id="theme"><option value="">Match Notion</option><option value="light">Always light</option><option value="dark">Always dark</option></select></label>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="how">
+    <strong>How to use a link</strong>
+    <ol>
+      <li>Copy the link for a widget.</li>
+      <li>In Notion, click the widget, then the link icon (or "Edit link"), and paste.</li>
+      <li>Press Enter. The widget reloads with your settings.</li>
+    </ol>
+  </div>
+</main>
+<script>
+(function () {
+  var BASE = 'https://wellkeptdesk.github.io/v1/';
+  var W = [
+    ['year', 'Year', 'Year progress', ['theme']],
+    ['day', 'Day', 'Day, week and month progress', ['theme']],
+    ['clock', 'Clock', 'Time over date', ['theme']],
+    ['quote', 'Quote', 'A new quote and picture every day', ['theme']],
+    ['weather', 'Weather', 'Current conditions', ['city', 'unit', 'theme']],
+    ['sky', 'Sky', 'Sun and moon', ['city', 'theme']],
+    ['focus', 'Focus timer', 'Work and break timer', ['work', 'break', 'theme']],
+    ['countdown', 'Countdown', 'Days until your date', ['date', 'label', 'theme']]
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  var list = $('list');
+  var rows = W.map(function (w) {
+    var r = document.createElement('div'); r.className = 'row';
+    r.innerHTML = '<h2>' + w[1] + '</h2><button type="button">Copy link</button><small>' + w[2] + '</small><div class="url"></div>';
+    list.appendChild(r);
+    var btn = r.querySelector('button'), u = r.querySelector('.url');
+    btn.onclick = function () {
+      var t = u.textContent;
+      var ok = function () { btn.textContent = 'Copied'; btn.className = 'done'; setTimeout(function () { btn.textContent = 'Copy link'; btn.className = ''; }, 1400); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, function () { sel(u); });
+      else sel(u);
+    };
+    return { w: w, u: u };
+  });
+  function sel(el) { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  function val(id) { return $(id).value.trim(); }
+  function render() {
+    var v = { city: val('city'), unit: val('unit'), work: val('work'), 'break': val('brk'), date: val('date'), label: val('label'), theme: val('theme') };
+    rows.forEach(function (r) {
+      var q = [];
+      r.w[3].forEach(function (k) { if (v[k]) q.push(k + '=' + encodeURIComponent(v[k])); });
+      r.u.textContent = BASE + r.w[0] + '/' + (q.length ? '?' + q.join('&') : '');
+    });
+  }
+  ['city', 'unit', 'work', 'brk', 'date', 'label', 'theme'].forEach(function (id) { $(id).addEventListener('input', render); });
+  render();
+})();
+</script>
+</body>
+</html>
