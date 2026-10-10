@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Daily quote · WellKeptDesk</title>
+<style>
+  :root { --ink: #4B4561; --muted: #8A847C; --line: #B3ACC8; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #E9E5F2; --muted: #A19B93; --line: #6F6888; } }
+  html[data-theme="light"] { --ink:#4B4561; --muted:#8A847C; --line:#B3ACC8; }
+  html[data-theme="dark"]  { --ink:#E9E5F2; --muted:#A19B93; --line:#6F6888; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { -webkit-font-smoothing: antialiased; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 0 2px; }
+  .bar { flex: none; align-self: stretch; margin: 10px 0; width: 3px; border-radius: 3px; background: var(--line); }
+  .col { min-width: 0; }
+  .q { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif; font-style: italic; color: var(--ink);
+       font-size: 16px; line-height: 1.38; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .a { margin-top: 8px; font: 600 11px/1 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap"><div class="bar"></div><div class="col"><div class="q" id="q">&nbsp;</div><div class="a" id="a"></div></div></div>
+<script>
+(function () {
+  var Q = [["We suffer more often in imagination than in reality.", "Seneca"], ["While we are postponing, life speeds by.", "Seneca"], ["Difficulties strengthen the mind, as labor does the body.", "Seneca"], ["It is not enough to be industrious; so are the ants. What are you industrious about?", "Henry David Thoreau"], ["The price of anything is the amount of life you exchange for it.", "Henry David Thoreau"], ["Simplify, simplify.", "Henry David Thoreau"], ["How vain it is to sit down to write when you have not stood up to live.", "Henry David Thoreau"], ["Things do not change; we change.", "Henry David Thoreau"], ["Do the thing and you shall have the power.", "Ralph Waldo Emerson"], ["Nothing great was ever achieved without enthusiasm.", "Ralph Waldo Emerson"], ["Write it on your heart that every day is the best day in the year.", "Ralph Waldo Emerson"], ["Well done is better than well said.", "Benjamin Franklin"], ["Lost time is never found again.", "Benjamin Franklin"], ["Men are disturbed not by things, but by the views which they take of them.", "Epictetus"], ["First say to yourself what you would be; and then do what you have to do.", "Epictetus"], ["No man is free who is not master of himself.", "Epictetus"], ["A journey of a thousand miles begins with a single step.", "Lao Tzu"], ["Nature does not hurry, yet everything is accomplished.", "Lao Tzu"], ["Seize the day, and put the least possible trust in tomorrow.", "Horace"], ["If you have a garden and a library, you have everything you need.", "Cicero"], ["The best is the enemy of the good.", "Voltaire"], ["Nothing will ever be attempted if all possible objections must first be overcome.", "Samuel Johnson"], ["Small steps, taken every day, add up to a long way.", "Proverb"], ["Well begun is half done.", "Proverb"], ["Slow and steady wins the race.", "Aesop"], ["Little by little, one travels far.", "Proverb"], ["Constant dripping hollows out a stone.", "Lucretius"]];
+  var p = new URLSearchParams(location.search);
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  // One quote per local calendar day, same for everyone on the same date.
+  var n = new Date(), day = Math.floor(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / 864e5);
+  var i = ((day * 7919) % Q.length + Q.length) % Q.length;
+  if (p.has('i')) i = (parseInt(p.get('i'), 10) || 0) % Q.length;
+  document.getElementById('q').textContent = '“' + Q[i][0] + '”';
+  document.getElementById('a').textContent = Q[i][1];
+})();
+</script>
+</body>
+</html>
