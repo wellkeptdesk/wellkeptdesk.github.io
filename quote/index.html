@@ -7,33 +7,54 @@
 <meta name="robots" content="noindex">
 <title>Daily quote · WellKeptDesk</title>
 <style>
-  :root { --ink: #4B4561; --muted: #8A847C; --line: #B3ACC8; }
-  @media (prefers-color-scheme: dark) { :root { --ink: #E9E5F2; --muted: #A19B93; --line: #6F6888; } }
+  :root { --ink:#4B4561; --muted:#8A847C; --line:#B3ACC8; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#E9E5F2; --muted:#A19B93; --line:#6F6888; } }
   html[data-theme="light"] { --ink:#4B4561; --muted:#8A847C; --line:#B3ACC8; }
   html[data-theme="dark"]  { --ink:#E9E5F2; --muted:#A19B93; --line:#6F6888; }
-  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
-  body { -webkit-font-smoothing: antialiased; }
-  .wrap { height: 100%; box-sizing: border-box; display: flex; gap: 12px; align-items: center; padding: 0 2px; }
-  .bar { flex: none; align-self: stretch; margin: 10px 0; width: 3px; border-radius: 3px; background: var(--line); }
-  .col { min-width: 0; }
-  .q { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif; font-style: italic; color: var(--ink);
-       font-size: 16px; line-height: 1.38; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-  .a { margin-top: 8px; font: 600 11px/1 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  html, body { margin:0; height:100%; background:transparent; overflow:hidden; }
+  body { -webkit-font-smoothing:antialiased; }
+  .wrap { height:100%; box-sizing:border-box; display:flex; flex-direction:column; gap:10px; padding:2px; }
+  .art { flex:1 1 auto; min-height:0; border-radius:14px; overflow:hidden; }
+  .art svg { display:block; width:100%; height:100%; }
+  .txt { flex:none; display:flex; gap:10px; }
+  .bar { flex:none; width:3px; border-radius:3px; background:var(--line); }
+  .q { font-family:Georgia,"Iowan Old Style","Palatino Linotype","Times New Roman",serif; font-style:italic; color:var(--ink); font-size:15px; line-height:1.35; }
+  .a { margin-top:6px; font:600 10.5px/1 ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
 </style>
 </head>
 <body>
-<div class="wrap"><div class="bar"></div><div class="col"><div class="q" id="q">&nbsp;</div><div class="a" id="a"></div></div></div>
+<div class="wrap"><div class="art" id="art"></div><div class="txt"><div class="bar"></div><div><div class="q" id="q">&nbsp;</div><div class="a" id="a"></div></div></div></div>
 <script>
 (function () {
   var Q = [["We suffer more often in imagination than in reality.", "Seneca"], ["While we are postponing, life speeds by.", "Seneca"], ["Difficulties strengthen the mind, as labor does the body.", "Seneca"], ["It is not enough to be industrious; so are the ants. What are you industrious about?", "Henry David Thoreau"], ["The price of anything is the amount of life you exchange for it.", "Henry David Thoreau"], ["Simplify, simplify.", "Henry David Thoreau"], ["How vain it is to sit down to write when you have not stood up to live.", "Henry David Thoreau"], ["Things do not change; we change.", "Henry David Thoreau"], ["Do the thing and you shall have the power.", "Ralph Waldo Emerson"], ["Nothing great was ever achieved without enthusiasm.", "Ralph Waldo Emerson"], ["Write it on your heart that every day is the best day in the year.", "Ralph Waldo Emerson"], ["Well done is better than well said.", "Benjamin Franklin"], ["Lost time is never found again.", "Benjamin Franklin"], ["Men are disturbed not by things, but by the views which they take of them.", "Epictetus"], ["First say to yourself what you would be; and then do what you have to do.", "Epictetus"], ["No man is free who is not master of himself.", "Epictetus"], ["A journey of a thousand miles begins with a single step.", "Lao Tzu"], ["Nature does not hurry, yet everything is accomplished.", "Lao Tzu"], ["Seize the day, and put the least possible trust in tomorrow.", "Horace"], ["If you have a garden and a library, you have everything you need.", "Cicero"], ["The best is the enemy of the good.", "Voltaire"], ["Nothing will ever be attempted if all possible objections must first be overcome.", "Samuel Johnson"], ["Small steps, taken every day, add up to a long way.", "Proverb"], ["Well begun is half done.", "Proverb"], ["Slow and steady wins the race.", "Aesop"], ["Little by little, one travels far.", "Proverb"], ["Constant dripping hollows out a stone.", "Lucretius"]];
   var p = new URLSearchParams(location.search);
   var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
-  // One quote per local calendar day, same for everyone on the same date.
   var n = new Date(), day = Math.floor(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / 864e5);
   var i = ((day * 7919) % Q.length + Q.length) % Q.length;
-  if (p.has('i')) i = (parseInt(p.get('i'), 10) || 0) % Q.length;
-  document.getElementById('q').textContent = '“' + Q[i][0] + '”';
+  if (p.has('i')) { i = (parseInt(p.get('i'), 10) || 0) % Q.length; day = i * 13 + 5; }
+  document.getElementById('q').textContent = '\u201C' + Q[i][0] + '\u201D';
   document.getElementById('a').textContent = Q[i][1];
+
+  // Original generative art, one composition per day. Soft lavender/oat palettes.
+  var seed = day * 2654435761 % 4294967296;
+  function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
+  var P = [[262,22],[255,18],[276,20],[215,16],[150,12],[32,22],[300,12]];
+  var pal = P[day % P.length];
+  var dark = th ? th === 'dark' : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  function c(h, s, l) { if (dark) l = 104 - l; return 'hsl(' + h + ',' + s + '%,' + l + '%)'; }
+  var h = pal[0], s = pal[1], W = 400, H = 200, o = '';
+  o += '<rect width="400" height="200" fill="' + c(h, s, 90) + '"/>';
+  var sx = 80 + rnd() * 240, sy = 40 + rnd() * 40, sr = 18 + rnd() * 14;
+  o += '<circle cx="' + sx + '" cy="' + sy + '" r="' + sr + '" fill="' + c(h + 20, s + 8, 80) + '"/>';
+  if (rnd() > .5) o += '<path d="M' + (sx - 70) + ' 200 V' + (sy + 20) + ' A70 70 0 0 1 ' + (sx + 70) + ' ' + (sy + 20) + ' V200" fill="none" stroke="' + c(h, s, 76) + '" stroke-width="2"/>';
+  for (var k = 0; k < 3; k++) {
+    var base = 110 + k * 30, amp = 10 + rnd() * 16, f = .008 + rnd() * .012, ph = rnd() * 6.28, d = 'M0 200 L0 ' + base;
+    for (var x = 0; x <= W; x += 8) d += ' L' + x + ' ' + (base + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.3 + ph) * amp * .4).toFixed(1);
+    d += ' L400 200 Z';
+    o += '<path d="' + d + '" fill="' + c(h - k * 6, s + k * 4, 78 - k * 12) + '"/>';
+  }
+  if (rnd() > .4) for (var b = 0; b < 3; b++) { var bx = 60 + rnd() * 280, by = 30 + rnd() * 40; o += '<path d="M' + bx + ' ' + by + ' q5 -5 10 0 q5 -5 10 0" fill="none" stroke="' + c(h, s, 55) + '" stroke-width="1.5" stroke-linecap="round"/>'; }
+  document.getElementById('art').innerHTML = '<svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">' + o + '</svg>';
 })();
 </script>
 </body>
