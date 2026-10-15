@@ -18,7 +18,8 @@
   .col { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
   .big { color: var(--ink); font-size: 17px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .l1 { color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .l2 { color: var(--ink); font-size: 12.5px; font-weight: 600; margin-top: 5px; white-space: nowrap; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; }
+  .l2 { color: var(--ink); font-size: 12.5px; font-weight: 600; margin-top: 5px; font-variant-numeric: tabular-nums; display: flex; flex-wrap: wrap; column-gap: 6px; }
+  .l2 span { white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
   @media (max-width: 260px) { .moon { width: 40px; height: 40px; } .big { font-size: 15px; } }
 </style>
 </head>
@@ -66,7 +67,12 @@
         var r = g.results[0];
         return fetch('https://api.open-meteo.com/v1/forecast?latitude=' + r.latitude + '&longitude=' + r.longitude + '&daily=sunrise,sunset&forecast_days=1&timezone=auto')
           .then(function (x) { return x.json(); })
-          .then(function (d) { $('l2').textContent = '↑ ' + hm(d.daily.sunrise[0]) + '   ↓ ' + hm(d.daily.sunset[0]) + ' · ' + r.name; });
+          .then(function (d) {
+            var l2 = $('l2'); l2.textContent = '';
+            ['↑ ' + hm(d.daily.sunrise[0]) + '   ↓ ' + hm(d.daily.sunset[0]), '· ' + r.name].forEach(function (t) {
+              var e = document.createElement('span'); e.textContent = t; l2.appendChild(e);
+            });
+          });
       }).catch(function () { $('l2').textContent = ''; });
   }
   moon(); sun(); setInterval(moon, 30 * 60 * 1000); setInterval(sun, 3 * 3600 * 1000);
