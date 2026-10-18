@@ -35,25 +35,26 @@
   document.getElementById('q').textContent = '\u201C' + Q[i][0] + '\u201D';
   document.getElementById('a').textContent = Q[i][1];
 
-  // Original generative art, one composition per day. Soft sage/greige palettes.
+  // Original generative art, one composition per day: soft clouds over a warm horizon glow, matched to the page banner.
   var seed = day * 2654435761 % 4294967296;
   function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
-  var P = [[205,7],[150,5],[212,6],[100,4],[198,8],[165,5],[220,6]];
-  var pal = P[day % P.length];
   var dark = th ? th === 'dark' : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
-  function c(h, s, l) { if (dark) l = 104 - l; return 'hsl(' + h + ',' + s + '%,' + l + '%)'; }
-  var h = pal[0], s = pal[1], W = 400, H = 200, o = '';
-  o += '<rect width="400" height="200" fill="' + c(h, s, 90) + '"/>';
-  var sx = 80 + rnd() * 240, sy = 40 + rnd() * 40, sr = 18 + rnd() * 14;
-  o += '<circle cx="' + sx + '" cy="' + sy + '" r="' + sr + '" fill="' + c(40, 14, 84) + '"/>';
-  if (rnd() > .5) o += '<path d="M' + (sx - 70) + ' 200 V' + (sy + 20) + ' A70 70 0 0 1 ' + (sx + 70) + ' ' + (sy + 20) + ' V200" fill="none" stroke="' + c(h, s, 76) + '" stroke-width="2"/>';
-  for (var k = 0; k < 3; k++) {
-    var base = 110 + k * 30, amp = 10 + rnd() * 16, f = .008 + rnd() * .012, ph = rnd() * 6.28, d = 'M0 200 L0 ' + base;
-    for (var x = 0; x <= W; x += 8) d += ' L' + x + ' ' + (base + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.3 + ph) * amp * .4).toFixed(1);
-    d += ' L400 200 Z';
-    o += '<path d="' + d + '" fill="' + c(h - k * 6, s + k * 4, 78 - k * 12) + '"/>';
+  function hs(h, s, l, a) { return 'hsla(' + h + ',' + s + '%,' + l + '%,' + (a == null ? 1 : a) + ')'; }
+  var sh = (day % 5 - 2) * 3;
+  var cTop = dark ? hs(215, 12, 14) : hs(72 + sh, 8, 70);
+  var cMid = dark ? hs(200, 9, 20) : hs(58, 11, 79);
+  var cBot = dark ? hs(205, 10, 30) : hs(40, 34, 85);
+  var o = '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + cTop + '"/><stop offset=".55" stop-color="' + cMid + '"/><stop offset="1" stop-color="' + cBot + '"/></linearGradient>'
+    + '<filter id="b" x="-80%" y="-200%" width="260%" height="500%"><feGaussianBlur stdDeviation="6"/></filter>'
+    + '<filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="' + (day % 97) + '"/><feColorMatrix values="0 0 0 0 .3 0 0 0 0 .28 0 0 0 0 .22 0 0 0 .5 -.1"/></filter></defs>';
+  o += '<rect width="400" height="200" fill="url(#g)"/>';
+  o += '<ellipse cx="' + (140 + rnd() * 120) + '" cy="215" rx="240" ry="70" fill="' + (dark ? hs(210, 12, 36, .5) : hs(44, 45, 92, .75)) + '" filter="url(#b)"/>';
+  for (var k = 0; k < 14; k++) {
+    var cx = rnd() * 400, cy = 15 + rnd() * 140, rx = 40 + rnd() * 60, ry = 12 + rnd() * 24;
+    var col = k % 3 === 0 ? (dark ? hs(205, 12, 40, .3) : hs(46, 38, 93, .6)) : (dark ? hs(210, 10, 12, .3) : hs(78, 7, 60, .5));
+    o += '<ellipse cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" fill="' + col + '" filter="url(#b)"/>';
   }
-  if (rnd() > .4) for (var b = 0; b < 3; b++) { var bx = 60 + rnd() * 280, by = 30 + rnd() * 40; o += '<path d="M' + bx + ' ' + by + ' q5 -5 10 0 q5 -5 10 0" fill="none" stroke="' + c(h, s, 55) + '" stroke-width="1.5" stroke-linecap="round"/>'; }
+  o += '<rect width="400" height="200" filter="url(#n)" opacity=".35"/>';
   document.getElementById('art').innerHTML = '<svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">' + o + '</svg>';
 })();
 </script>
