@@ -38,7 +38,7 @@
   // Original generative art, one composition per day. Soft sage/greige palettes.
   var seed = day * 2654435761 % 4294967296;
   function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
-  var P = [[140,7],[130,5],[150,8],[165,6],[110,5],[45,6],[135,4]];
+  var P = [[75,5],[60,5],[90,4],[130,4],[68,4],[100,4],[145,4]];
   var pal = P[day % P.length];
   var dark = th ? th === 'dark' : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
   function c(h, s, l) { if (dark) l = 104 - l; return 'hsl(' + h + ',' + s + '%,' + l + '%)'; }
