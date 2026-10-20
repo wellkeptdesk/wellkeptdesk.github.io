@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Month calendar · WellKeptDesk</title>
+<style>
+  :root { --ink: #4A4742; --muted: #8E877D; --faint: #BDB6AB; --line: #A29B90; --track: #E3DED3; --on: #F7F4EE; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECE9E2; --muted: #A8A196; --faint: #6E6960; --line: #B9B1A4; --track: #3D3A36; --on: #2A2825; } }
+  html[data-theme="light"] { --ink:#4A4742; --muted:#8E877D; --faint:#BDB6AB; --line:#A29B90; --track:#E3DED3; --on:#F7F4EE; }
+  html[data-theme="dark"]  { --ink:#ECE9E2; --muted:#A8A196; --faint:#6E6960; --line:#B9B1A4; --track:#3D3A36; --on:#2A2825; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 0 2px; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
+  .month { color: var(--ink); font-size: 15px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+  .wk { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; text-align: center; }
+  .dow { color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .08em; padding-bottom: 3px; }
+  .d { color: var(--ink); font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 24px; height: 24px; width: 24px; margin: 0 auto; border-radius: 50%; }
+  .d.out { color: var(--faint); }
+  .d.we { color: var(--muted); }
+  .d.today { background: var(--ink); color: var(--on); font-weight: 700; }
+  @media (max-width: 190px) { .d { width: 20px; height: 20px; line-height: 20px; font-size: 11px; } .wk { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><span class="month" id="month">&nbsp;</span><span class="wk" id="wk"></span></div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var sun = (q.get('week') || '').toLowerCase() === 'sun';
+  var $ = function (id) { return document.getElementById(id); };
+  var M = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var H = sun ? ['S','M','T','W','T','F','S'] : ['M','T','W','T','F','S','S'];
+  function isoWeek(d) {
+    var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    var n = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - n);
+    var y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return Math.ceil(((t - y0) / 864e5 + 1) / 7);
+  }
+  function run() {
+    var n = new Date(), y = n.getFullYear(), m = n.getMonth(), today = n.getDate();
+    var first = new Date(y, m, 1);
+    var lead = sun ? first.getDay() : (first.getDay() + 6) % 7;
+    var dim = new Date(y, m + 1, 0).getDate();
+    var prev = new Date(y, m, 0).getDate();
+    var cells = Math.ceil((lead + dim) / 7) * 7;
+    var html = H.map(function (h) { return '<div class="dow">' + h + '</div>'; }).join('');
+    for (var i = 0; i < cells; i++) {
+      var dn = i - lead + 1, cls = 'd', label;
+      if (dn < 1) { label = prev + dn; cls += ' out'; }
+      else if (dn > dim) { label = dn - dim; cls += ' out'; }
+      else {
+        label = dn;
+        var col = i % 7, weekend = sun ? (col === 0 || col === 6) : (col >= 5);
+        if (weekend) cls += ' we';
+        if (dn === today) cls += ' today';
+      }
+      html += '<div><div class="' + cls + '">' + label + '</div></div>';
+    }
+    $('grid').innerHTML = html;
+    $('month').textContent = M[m] + ' ' + y;
+    $('wk').textContent = 'Week ' + isoWeek(n);
+  }
+  run(); setInterval(run, 60 * 1000);
+})();
+</script>
+</body>
+</html>
