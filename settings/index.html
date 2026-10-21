@@ -35,8 +35,7 @@
   <p class="lead">Pick your settings, copy a link, and paste it into the matching widget in Notion. Nothing is stored; the settings live inside the link.</p>
 
   <div class="grid">
-    <label>City (weather and sky)<input id="city" placeholder="e.g. London" autocomplete="off"></label>
-    <label>Temperature<select id="unit"><option value="">Celsius</option><option value="f">Fahrenheit</option></select></label>
+    <label>City (sunrise and sunset)<input id="city" placeholder="e.g. London, Istanbul, Tokyo" autocomplete="off"></label>
     <label>Focus minutes<input id="work" type="number" min="1" max="180" placeholder="25"></label>
     <label>Break minutes<input id="brk" type="number" min="1" max="60" placeholder="5"></label>
     <label>Countdown date<input id="date" type="date"></label>
@@ -63,7 +62,6 @@
     ['day', 'Day', 'Day, week and month progress', ['theme']],
     ['clock', 'Clock', 'Time over date', ['theme']],
     ['quote', 'Quote', 'A new quote and picture every day', ['theme']],
-    ['weather', 'Weather', 'Current conditions', ['city', 'unit', 'theme']],
     ['sky', 'Sky', 'Sun and moon', ['city', 'theme']],
     ['focus', 'Focus timer', 'Work and break timer', ['work', 'break', 'theme']],
     ['countdown', 'Countdown', 'Days until your date', ['date', 'label', 'theme']]
@@ -86,14 +84,14 @@
   function sel(el) { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
   function val(id) { return $(id).value.trim(); }
   function render() {
-    var v = { city: val('city'), unit: val('unit'), work: val('work'), 'break': val('brk'), date: val('date'), label: val('label'), theme: val('theme') };
+    var v = { city: val('city'), work: val('work'), 'break': val('brk'), date: val('date'), label: val('label'), theme: val('theme') };
     rows.forEach(function (r) {
       var q = [];
       r.w[3].forEach(function (k) { if (v[k]) q.push(k + '=' + encodeURIComponent(v[k])); });
       r.u.textContent = BASE + r.w[0] + '/' + (q.length ? '?' + q.join('&') : '');
     });
   }
-  ['city', 'unit', 'work', 'brk', 'date', 'label', 'theme'].forEach(function (id) { $(id).addEventListener('input', render); });
+  ['city', 'work', 'brk', 'date', 'label', 'theme'].forEach(function (id) { $(id).addEventListener('input', render); });
   render();
 })();
 </script>
