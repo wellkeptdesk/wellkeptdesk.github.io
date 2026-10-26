@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Water · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .big { color: var(--ink); font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 0 2px; }
+  .glass { flex: none; width: 52px; height: 72px; }
+  .glass .tr { fill: var(--track); } .glass .fg { fill: var(--line); transition: y .5s ease, height .5s ease; }
+  .col { display: flex; flex-direction: column; min-width: 0; gap: 3px; }
+  .btns { display: flex; gap: 6px; margin-top: 5px; }
+  @media (max-width: 170px) { .glass { width: 36px; height: 50px; } .big { font-size: 24px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <svg class="glass" viewBox="0 0 52 72" aria-hidden="true">
+    <defs><clipPath id="c"><path d="M6 4 H46 L41 68 H11 Z"/></clipPath></defs>
+    <rect class="tr" x="0" y="0" width="52" height="72" clip-path="url(#c)"/>
+    <rect class="fg" id="fg" x="0" y="72" width="52" height="0" clip-path="url(#c)"/>
+  </svg>
+  <div class="col"><div class="big" id="t">0<small id="g">/ 8</small></div><div class="l" id="l">Glasses today</div>
+    <div class="btns"><button id="add">+ Glass</button><button class="g" id="sub" aria-label="Remove one glass">−</button></div></div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var goal = Math.max(1, Math.min(20, parseInt(p.get('goal'), 10) || 8)), unit = (p.get('unit') || 'Glasses').slice(0, 20);
+  var key = 'wkd-water', n = 0, day = ymd(new Date());
+  try { var s = JSON.parse(store(key) || 'null'); if (s && s.d === day) n = s.n; } catch (e) {}
+  function draw() {
+    var f = Math.min(1, n / goal) * 64;
+    $('t').firstChild.nodeValue = n; $('g').textContent = '/ ' + goal;
+    $('l').textContent = n >= goal ? 'Goal reached' : unit + ' today';
+    $('fg').setAttribute('y', 68 - f); $('fg').setAttribute('height', f + 4);
+    store(key, JSON.stringify({ d: day, n: n }));
+  }
+  $('add').onclick = function () { if (ymd(new Date()) !== day) { day = ymd(new Date()); n = 0; } n = Math.min(99, n + 1); draw(); };
+  $('sub').onclick = function () { n = Math.max(0, n - 1); draw(); };
+  draw();
+})();
+</script>
+</body>
+</html>

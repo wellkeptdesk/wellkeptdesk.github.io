@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Chart · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .big { color: var(--ink); font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; padding: 6px 2px 2px; gap: 6px; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .val { font-size: 22px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .val small { font-size: 12px; color: var(--muted); margin-left: 3px; }
+  svg { flex: 1; width: 100%; min-height: 0; overflow: visible; }
+  .bar { fill: var(--line); } .bar.dim { fill: var(--track); }
+  .ln { fill: none; stroke: var(--line); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .area { fill: var(--line); opacity: .14; }
+  .goal { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+  .tk { fill: var(--muted); font-size: 10px; font-weight: 600; }
+  .ring-tr { fill: none; stroke: var(--track); } .ring-fg { fill: none; stroke: var(--line); stroke-linecap: round; }
+  .empty { color: var(--muted); font-size: 12px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="title" id="h">Chart</div><div class="val" id="v"></div></div>
+  <svg id="c" role="img"></svg>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); }, NS = 'http://www.w3.org/2000/svg';
+  var type = p.get('type') || 'bar', unit = (p.get('unit') || '').slice(0, 8), goal = parseFloat(p.get('goal'));
+  var d = (p.get('d') || '').split(',').map(parseFloat).filter(function (x) { return !isNaN(x); }).slice(0, 60);
+  var labels = (p.get('labels') || '').split(',').slice(0, 60);
+  $('h').textContent = (p.get('title') || 'Chart').slice(0, 40);
+  var svg = $('c');
+  function el(n, a, txt) { var e = document.createElementNS(NS, n); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; }
+  function fmt(x) { return (Math.round(x * 10) / 10).toLocaleString('en-US'); }
+  if (!d.length) {
+    svg.remove(); var e = document.createElement('div'); e.className = 'empty';
+    e.textContent = 'Add ?d=6,7.5,8 and optionally &type=bar|line|ring &labels=M,T,W &goal=8 &unit=h &title=Sleep';
+    document.querySelector('.wrap').appendChild(e); return;
+  }
+  var last = d[d.length - 1];
+  svg.setAttribute('aria-label', $('h').textContent + ': ' + d.map(fmt).join(', ') + (unit ? ' ' + unit : ''));
+  if (type === 'ring') {
+    var max = !isNaN(goal) && goal > 0 ? goal : 100, f = Math.max(0, Math.min(1, last / max));
+    svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    el('circle', { cx: 50, cy: 50, r: 40, 'class': 'ring-tr', 'stroke-width': 12 });
+    el('circle', { cx: 50, cy: 50, r: 40, 'class': 'ring-fg', 'stroke-width': 12, pathLength: 100, 'stroke-dasharray': (f * 100) + ' 100', transform: 'rotate(-90 50 50)' });
+    el('text', { x: 50, y: 56, 'text-anchor': 'middle', 'class': 'tk', style: 'font-size:18px;fill:var(--ink)' }, Math.round(f * 100) + '%');
+    $('v').innerHTML = fmt(last) + '<small>/ ' + fmt(max) + (unit ? ' ' + unit : '') + '</small>';
+    return;
+  }
+  function draw() {
+  svg.innerHTML = '';
+  var r = svg.getBoundingClientRect(), W = Math.max(60, r.width), H = Math.max(40, r.height), padB = labels[0] ? 14 : 2, hi = Math.max.apply(null, d.concat(isNaN(goal) ? [] : [goal])), lo = type === 'line' ? Math.min.apply(null, d.concat(isNaN(goal) ? [] : [goal])) : 0;
+  if (hi === lo) { hi += 1; lo = Math.min(lo, 0); }
+  var y = function (v) { return 4 + (H - padB - 4) * (1 - (v - lo) / (hi - lo)); };
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  var n = d.length, step = W / n;
+  if (type === 'line') {
+    var pts = d.map(function (v, i) { return (n === 1 ? W / 2 : i * (W / (n - 1))) + ',' + y(v); });
+    el('path', { d: 'M' + pts.join(' L') + ' L' + (n === 1 ? W / 2 : W) + ',' + (H - padB) + ' L0,' + (H - padB) + ' Z', 'class': 'area' });
+    el('path', { d: 'M' + pts.join(' L'), 'class': 'ln' });
+  } else {
+    d.forEach(function (v, i) {
+      var bw = step * .62, x = i * step + (step - bw) / 2, top = y(Math.max(0, v));
+      el('rect', { x: x, y: top, width: bw, height: Math.max(1, H - padB - top), rx: Math.min(4, bw / 2), 'class': 'bar' + (i === n - 1 ? '' : (isNaN(goal) || v >= goal ? '' : ' dim')) });
+    });
+  }
+  if (!isNaN(goal)) el('line', { x1: 0, x2: W, y1: y(goal), y2: y(goal), 'class': 'goal' });
+  if (labels[0]) labels.forEach(function (t, i) { if (i < n) el('text', { x: type === 'line' ? (n === 1 ? W / 2 : i * (W / (n - 1))) : i * step + step / 2, y: H - 2, 'text-anchor': type === 'line' ? (i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle') : 'middle', 'class': 'tk' }, t.slice(0, 4)); });
+  }
+  draw(); addEventListener('resize', draw);
+  $('v').innerHTML = fmt(last) + (unit ? '<small>' + unit + '</small>' : '');
+})();
+</script>
+</body>
+</html>
