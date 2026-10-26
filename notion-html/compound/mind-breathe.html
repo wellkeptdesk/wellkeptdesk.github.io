@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Breathe · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .big { color: var(--ink); font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 0 2px; }
+  .orb { position: relative; z-index: 0; flex: none; width: 72px; height: 72px; display: grid; place-items: center; }
+  .orb i { width: 72px; height: 72px; border-radius: 50%; background: var(--line); opacity: .85; transform: scale(.45); transition-property: transform; transition-timing-function: ease-in-out; }
+  .orb::before { content: ""; position: absolute; width: 72px; height: 72px; border-radius: 50%; background: var(--track); z-index: -1; }
+  .col { display: flex; flex-direction: column; min-width: 0; gap: 3px; }
+  .btns { display: flex; gap: 6px; margin-top: 5px; }
+  @media (prefers-reduced-motion: reduce) { .orb i { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="orb"><i id="o"></i></div>
+  <div class="col"><div class="big" id="t" style="font-size:24px">Breathe</div><div class="l" id="l">Box 4·4·4·4</div>
+    <div class="btns"><button id="go">Start</button></div></div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams("pattern=4-4-4-4&label=Box breathing");
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var pat = (p.get('pattern') || '4-4-4-4').split('-').map(function (x) { return Math.max(0, Math.min(12, parseInt(x, 10) || 0)); });
+  while (pat.length < 4) pat.push(0);
+  var names = ['Breathe in', 'Hold', 'Breathe out', 'Hold'], scale = [1, 1, .45, .45];
+  $('l').textContent = (p.get('label') || 'Pattern') + ' ' + pat.join('·');
+  var on = false, step = 0, to = null, iv = null, cyc = 0;
+  function run() {
+    while (!pat[step]) step = (step + 1) % 4;
+    var s = pat[step], left = s; $('t').textContent = names[step];
+    $('o').style.transitionDuration = s + 's'; $('o').style.transform = 'scale(' + scale[step] + ')';
+    clearInterval(iv); $('l').textContent = left + 's · round ' + (cyc + 1); iv = setInterval(function () { left--; if (left > 0) $('l').textContent = left + 's · round ' + (cyc + 1); }, 1000);
+    to = setTimeout(function () { step = (step + 1) % 4; if (step === 0) cyc++; run(); }, s * 1000);
+  }
+  $('go').onclick = function () {
+    on = !on; $('go').textContent = on ? 'Stop' : 'Start';
+    if (on) { step = 0; cyc = 0; run(); }
+    else { clearTimeout(to); clearInterval(iv); $('t').textContent = 'Breathe'; $('l').textContent = cyc + ' rounds done'; $('o').style.transform = 'scale(.45)'; }
+  };
+})();
+</script>
+</body>
+</html>

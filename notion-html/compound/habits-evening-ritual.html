@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Ritual checklist · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; --sand: #D9C9B0; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; --sand: #8A7B64; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; --sand:#D9C9B0; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; --sand:#8A7B64; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 2px; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
+  .name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .big { font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible, textarea:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .list { display: flex; flex-direction: column; gap: 6px; }
+  .it { display: flex; align-items: center; gap: 10px; width: 100%; background: none; color: var(--ink); padding: 0; border-radius: 8px; text-align: left; font-size: 13px; font-weight: 500; }
+  .bx { flex: none; width: 18px; height: 18px; border-radius: 6px; box-shadow: inset 0 0 0 1.5px var(--line); display: grid; place-items: center; }
+  .it.on .bx { background: var(--line); box-shadow: none; }
+  .it.on .bx::after { content: ""; width: 8px; height: 4px; border: solid var(--btnt); border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); }
+  .it.on .tx { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+  .tx { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar { height: 4px; border-radius: 2px; background: var(--track); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--line); border-radius: 2px; transition: width .4s ease; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="name" id="n">Morning</div><div class="l" id="c"></div></div>
+  <div class="bar"><i id="b"></i></div>
+  <div class="list" id="list"></div>
+  <div class="l2" id="f">Fresh list every day · saved on this device</div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams("title=Evening&items=Log today,Ten-minute tidy,Lay out tomorrow,Screens off 30 min before bed,Read 10 pages");
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var title = (p.get('title') || 'Morning').slice(0, 40);
+  var items = (p.get('items') || 'Glass of water,Stretch 5 min,Pick 3 priorities,No phone first hour').split(',').map(function (s) { return s.trim().slice(0, 48); }).filter(Boolean).slice(0, 8);
+  var key = 'wkd-ritual-' + title.toLowerCase();
+  $('n').textContent = title;
+  function load() { var o = {}; try { o = JSON.parse(store(key) || '{}') || {}; } catch (e) {} return o.day === ymd(new Date()) ? o : { day: ymd(new Date()), on: {} }; }
+  function draw() {
+    var s = load(), box = $('list'), n = 0; box.innerHTML = '';
+    items.forEach(function (t, i) {
+      var b = document.createElement('button'); b.className = 'it' + (s.on[i] ? ' on' : ''); b.setAttribute('aria-pressed', s.on[i] ? 'true' : 'false');
+      b.innerHTML = '<span class="bx"></span><span class="tx"></span>'; b.lastChild.textContent = t;
+      b.onclick = function () { var c = load(); if (c.on[i]) delete c.on[i]; else c.on[i] = 1; store(key, JSON.stringify(c)); draw(); };
+      if (s.on[i]) n++; box.appendChild(b);
+    });
+    $('c').textContent = n + ' / ' + items.length; $('b').style.width = (n / items.length * 100) + '%';
+    $('f').textContent = n === items.length ? 'All done. Nice start.' : 'Fresh list every day · saved on this device';
+  }
+  draw(); setInterval(draw, 60 * 1000);
+})();
+</script>
+</body>
+</html>

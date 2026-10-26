@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Habit tracker · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .big { color: var(--ink); font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 2px; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .d { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .d span { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .04em; }
+  .dot { width: 100%; max-width: 34px; aspect-ratio: 1; border-radius: 50%; border: 0; padding: 0; background: var(--track); cursor: pointer; }
+  .dot.on { background: var(--line); }
+  .dot.today { box-shadow: 0 0 0 2px var(--tile), 0 0 0 4px var(--line); }
+  .dot:disabled { cursor: default; opacity: .45; }
+  .foot { display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="name" id="n">Habit</div><div class="l" id="wk"></div></div>
+  <div class="days" id="days"></div>
+  <div class="foot"><div class="l2" id="s"></div><div class="l2">Saved on this device</div></div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams("label=Train&goal=4");
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var label = (p.get('label') || 'Habit').slice(0, 40), goal = Math.max(1, Math.min(7, parseInt(p.get('goal'), 10) || 7));
+  var key = 'wkd-habit-' + label.toLowerCase();
+  var done = {}; try { done = JSON.parse(store(key) || '{}') || {}; } catch (e) { done = {}; }
+  $('n').textContent = label;
+  function streak() { var n = 0, d = new Date(); if (!done[ymd(d)]) d.setDate(d.getDate() - 1); while (done[ymd(d)]) { n++; d.setDate(d.getDate() - 1); } return n; }
+  function draw() {
+    var now = new Date(), mon = new Date(now); mon.setDate(now.getDate() - (now.getDay() + 6) % 7);
+    var box = $('days'), hit = 0; box.innerHTML = '';
+    'MTWTFSS'.split('').forEach(function (c, i) {
+      var d = new Date(mon); d.setDate(mon.getDate() + i); var k = ymd(d), future = d > now && k !== ymd(now);
+      var w = document.createElement('div'); w.className = 'd';
+      var b = document.createElement('button'); b.className = 'dot' + (done[k] ? ' on' : '') + (k === ymd(now) ? ' today' : '');
+      b.disabled = future; b.setAttribute('aria-label', d.toDateString() + (done[k] ? ', done' : ''));
+      b.onclick = function () { if (done[k]) delete done[k]; else done[k] = 1; store(key, JSON.stringify(done)); draw(); };
+      if (done[k]) hit++;
+      var s = document.createElement('span'); s.textContent = c; w.appendChild(b); w.appendChild(s); box.appendChild(w);
+    });
+    $('wk').textContent = hit + ' / ' + goal + ' this week';
+    var st = streak(); $('s').textContent = st ? st + '-day streak' : 'Tap today to start';
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
