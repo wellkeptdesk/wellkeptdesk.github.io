@@ -35,7 +35,7 @@
 </div>
 <script>
 (function () {
-  var p = new URLSearchParams(location.search);
+  var p = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
   var $ = function (i) { return document.getElementById(i); };
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }

@@ -38,7 +38,7 @@
 </div>
 <script>
 (function () {
-  var p = new URLSearchParams(location.search);
+  var p = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
   var W = Math.max(1, Math.min(180, parseInt(p.get('work'), 10) || 25)) * 60, B = Math.max(1, Math.min(60, parseInt(p.get('break'), 10) || 5)) * 60;
   var mode = 'Focus', total = W, left = W, end = 0, timer = null;

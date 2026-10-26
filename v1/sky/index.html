@@ -34,7 +34,7 @@
 <script>
 (function () {
   // Everything here is computed in the browser. No network requests, no third-party services.
-  var q = new URLSearchParams(location.search);
+  var q = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
   var $ = function (id) { return document.getElementById(id); };
   var SYN = 29.530588853, REF = Date.UTC(2000, 0, 6, 18, 14);
