@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clock & date · Linen Vows</title>
+<style>
+:root{--bg:#F6F3EE;--band:#EAE6DF;--main:#8A9886;--deep:#4F5A4D;--acc:#A99B8B;--ink:#35342F;--mute:#7A766E;--line:#DDD7CD;--card:#FBF9F6}
+@media (prefers-color-scheme:dark){:root{--bg:#22231F;--band:#2E302A;--main:#9DAC98;--deep:#C9D3C4;--acc:#B5A897;--ink:#ECE8E1;--mute:#A39E95;--line:#3A3C35;--card:#272824}}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#fff}
+@media (prefers-color-scheme:dark){html,body{background:#191919}}
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);display:grid;place-items:center;padding:6px;overflow:hidden}
+.card{position:relative;width:100%;max-width:240px;background:var(--bg);border-radius:14px;padding:12px 16px 12px;overflow:hidden;isolation:isolate}
+.card::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .38 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.serif{font-family:"Cormorant Garamond","Cormorant",Georgia,"Times New Roman",serif}
+.cap{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.gear{position:absolute;top:7px;right:8px;width:22px;height:22px;border-radius:50%;opacity:.0;transition:opacity .2s;display:grid;place-items:center;color:var(--mute)}
+.card:hover .gear,.gear:focus-visible{opacity:.85}
+.set{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;justify-content:center;gap:7px;padding:14px;z-index:5}
+.set.on{display:flex}
+.set label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600;display:flex;flex-direction:column;gap:3px}
+.set input,.set select{font:13px inherit;font-family:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%}
+.set .row{display:flex;gap:6px}
+.btn{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:7px 10px;border-radius:999px;background:var(--deep);color:var(--bg)}
+.btn.ghost{background:var(--band);color:var(--ink)}
+.hint{font-size:11px;color:var(--mute)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.card{display:flex;align-items:center;gap:12px}
+.s{width:30px;height:30px;flex:none}
+.t{font-size:30px;font-weight:600;line-height:1;color:var(--ink)} .t small{font-size:14px;font-weight:500;color:var(--mute);margin-left:3px;font-family:Inter,system-ui,sans-serif;letter-spacing:.04em}
+.d{font-size:11.5px;color:var(--mute);margin-top:5px;letter-spacing:.02em}</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter>
+<filter id="wash" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="9" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="5"/></filter>
+</defs></svg>
+<div class="card"><svg class="s" viewBox="0 0 40 40"><path id="sp" fill="var(--main)" filter="url(#rough)"/><circle cx="20" cy="20" r="8.5" fill="none" stroke="var(--bg)" stroke-width="1.4"/><path d="M20 14.5c2.6 2.4 2.6 8.6 0 11-2.6-2.4-2.6-8.6 0-11z" fill="var(--bg)" opacity=".9"/></svg><div><div class="t serif" id="t"></div><div class="d" id="d"></div></div></div>
+<script>
+const KEY='lv:clock';
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}};
+function seal(cx,cy,R,r,n){let p='';for(let i=0;i<=n*2;i++){const a=i/(n*2)*Math.PI*2-Math.PI/2,rr=i%2?r:R;p+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(2)+' '+(cy+rr*Math.sin(a)).toFixed(2)}return p+'Z'}
+const gearSvg='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+document.querySelectorAll('.gear').forEach(g=>{g.innerHTML=gearSvg;g.setAttribute('aria-label','Settings')});
+const fmtDate=(d,o)=>d.toLocaleDateString('en-GB',o||{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+const parseD=s=>{if(!s)return null;const [y,m,d]=s.split('-').map(Number);return y?new Date(y,m-1,d):null};
+const dayDiff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+document.getElementById('sp').setAttribute('d',seal(20,20,18,16,14));
+function tick(){const n=new Date();let h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0'),ap=h<12?'am':'pm';h=h%12||12;
+document.getElementById('t').innerHTML=h+':'+m+'<small>'+ap+'</small>';document.getElementById('d').textContent=fmtDate(n,{weekday:'long',day:'numeric',month:'long'})}
+tick();setInterval(tick,1000*5);
+</script></body></html>

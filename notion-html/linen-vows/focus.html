@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>This month's focus · Linen Vows</title>
+<style>
+:root{--bg:#F6F3EE;--band:#EAE6DF;--main:#8A9886;--deep:#4F5A4D;--acc:#A99B8B;--ink:#35342F;--mute:#7A766E;--line:#DDD7CD;--card:#FBF9F6}
+@media (prefers-color-scheme:dark){:root{--bg:#22231F;--band:#2E302A;--main:#9DAC98;--deep:#C9D3C4;--acc:#B5A897;--ink:#ECE8E1;--mute:#A39E95;--line:#3A3C35;--card:#272824}}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#fff}
+@media (prefers-color-scheme:dark){html,body{background:#191919}}
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);display:grid;place-items:center;padding:6px;overflow:hidden}
+.card{position:relative;width:100%;max-width:300px;background:var(--bg);border-radius:14px;padding:14px 16px 14px;overflow:hidden;isolation:isolate}
+.card::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .38 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.serif{font-family:"Cormorant Garamond","Cormorant",Georgia,"Times New Roman",serif}
+.cap{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.gear{position:absolute;top:7px;right:8px;width:22px;height:22px;border-radius:50%;opacity:.0;transition:opacity .2s;display:grid;place-items:center;color:var(--mute)}
+.card:hover .gear,.gear:focus-visible{opacity:.85}
+.set{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;justify-content:center;gap:7px;padding:14px;z-index:5}
+.set.on{display:flex}
+.set label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600;display:flex;flex-direction:column;gap:3px}
+.set input,.set select{font:13px inherit;font-family:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%}
+.set .row{display:flex;gap:6px}
+.btn{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:7px 10px;border-radius:999px;background:var(--deep);color:var(--bg)}
+.btn.ghost{background:var(--band);color:var(--ink)}
+.hint{font-size:11px;color:var(--mute)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.ph{font-size:22px;font-weight:600;line-height:1.1;margin:4px 0 8px;color:var(--deep)}
+.trail{display:flex;gap:4px;margin:2px 0 10px}.trail i{flex:1;height:4px;border-radius:3px;background:var(--band)}.trail i.on{background:var(--main)}.trail i.past{background:var(--acc);opacity:.55}
+ul{list-style:none}li{display:flex;gap:9px;align-items:center;font-size:12.5px;padding:6px 0;border-top:1px solid var(--line);cursor:pointer;user-select:none}
+li svg{width:16px;height:16px;flex:none}li.done span{color:var(--mute);text-decoration:line-through;text-decoration-color:var(--acc)}
+.empty .btn{margin-top:10px}</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter>
+<filter id="wash" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="9" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="5"/></filter>
+</defs></svg>
+<div class="card"><button class="gear" id="g"></button><div id="view"></div>
+<form class="set" id="set"><label>Wedding date<input type="date" id="fd" required></label><div class="row"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" id="cx">Cancel</button></div><div class="hint">Tick items off as you go. Your full task list lives in Checklist.</div></form></div>
+<script>
+const KEY='lv:focus';
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}};
+function seal(cx,cy,R,r,n){let p='';for(let i=0;i<=n*2;i++){const a=i/(n*2)*Math.PI*2-Math.PI/2,rr=i%2?r:R;p+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(2)+' '+(cy+rr*Math.sin(a)).toFixed(2)}return p+'Z'}
+const gearSvg='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+document.querySelectorAll('.gear').forEach(g=>{g.innerHTML=gearSvg;g.setAttribute('aria-label','Settings')});
+const fmtDate=(d,o)=>d.toLocaleDateString('en-GB',o||{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+const parseD=s=>{if(!s)return null;const [y,m,d]=s.split('-').map(Number);return y?new Date(y,m-1,d):null};
+const dayDiff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+const P=[[99999,366,'12+ months out',['Agree on a total budget','Draft the guest list','Tour and book the venue']],
+[365,270,'12–9 months out',['Book photographer and videographer','Book caterer or confirm menu style','Ask your wedding party']],
+[269,180,'9–6 months out',['Send save-the-dates','Book florist and music','Start shopping for attire']],
+[179,120,'6–4 months out',['Order invitations','Plan the honeymoon','Book a hair and makeup trial']],
+[119,60,'4–2 months out',['Send invitations','Cake tasting','First attire fitting']],
+[59,30,'2–1 months out',['Chase missing RSVPs','Finalise the menu','Collect the rings']],
+[29,8,'The final month',['Finish the seating plan','Make final payments','Confirm vendor arrival times']],
+[7,1,'Wedding week',['Pack the day-of kit','Share the run of show','Rest, eat well, drink water']],
+[0,0,'The day itself',['Breathe','Hold hands often','Enjoy every minute']],
+[-1,-99999,'After the wedding',['Write thank-you notes','Return rentals','Update your name and documents']]];
+const V=document.getElementById('view'),S=document.getElementById('set');let st=store.get();st.done=st.done||{};
+const leaf='<path d="M8 2.5c3.2 2.6 3.2 8.4 0 11-3.2-2.6-3.2-8.4 0-11z" fill="var(--bg)"/>';
+function draw(){const d=parseD(st.date);if(!d){V.innerHTML='<div class="empty"><div class="cap">This month\'s focus</div><div class="ph serif">Add your wedding date</div><div class="hint">The three things that matter most right now.</div><button class="btn" id="go">Add date</button></div>';document.getElementById('go').onclick=open;return}
+const left=dayDiff(new Date(),d),i=P.findIndex(p=>left<=p[0]&&left>=p[1]),ph=P[i];
+V.innerHTML=`<div class="cap">This month's focus</div><div class="ph serif">${ph[2]}</div><div class="trail">${P.map((p,j)=>`<i class="${j<i?'past':j==i?'on':''}"></i>`).join('')}</div><ul>${ph[3].map((t,k)=>{const id=i+'-'+k,on=st.done[id];return `<li data-id="${id}" class="${on?'done':''}"><svg viewBox="0 0 16 16"><path d="${seal(8,8,7.6,6.6,10)}" fill="${on?'var(--main)':'none'}" stroke="var(--main)" stroke-width="1" filter="url(#rough)"/>${on?leaf:''}</svg><span>${t}</span></li>`}).join('')}</ul>`;
+V.querySelectorAll('li').forEach(li=>li.onclick=()=>{const id=li.dataset.id;st.done[id]=!st.done[id];store.set(st);draw()})}
+function open(){document.getElementById('fd').value=st.date||'';S.classList.add('on')}
+document.getElementById('g').onclick=open;document.getElementById('cx').onclick=()=>S.classList.remove('on');
+S.onsubmit=e=>{e.preventDefault();st.date=document.getElementById('fd').value;store.set(st);S.classList.remove('on');draw()};draw();setInterval(draw,36e5);
+</script></body></html>
