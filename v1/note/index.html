@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Sticky note · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; --sand: #D9C9B0; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; --sand: #8A7B64; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; --sand:#D9C9B0; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; --sand:#8A7B64; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 2px; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
+  .name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .big { font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible, textarea:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .wrap { justify-content: flex-start; padding: 6px 2px; }
+  .pad { flex: 1; min-height: 0; display: flex; flex-direction: column; border-radius: 12px; background: var(--tile); padding: 12px 14px; box-sizing: border-box; background-image: radial-gradient(var(--track) 1px, transparent 1.2px); background-size: 14px 14px; }
+  textarea { flex: 1; min-height: 0; resize: none; border: 0; background: transparent; color: var(--ink); font: 500 14px/1.55 inherit; font-family: inherit; padding: 0; border-radius: 4px; }
+  textarea::placeholder { color: var(--muted); }
+  textarea:focus-visible { outline: none; }
+  .pad:focus-within { box-shadow: inset 0 0 0 1.5px var(--line); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="l" id="n">Note</div><div class="l2" id="s">Saved on this device</div></div>
+  <div class="pad"><textarea id="t" spellcheck="true" maxlength="2000" aria-label="Note"></textarea></div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var title = (p.get('title') || 'Note').slice(0, 40), key = 'wkd-note-' + title.toLowerCase(), daily = p.get('daily') === '1';
+  if (daily) key += '-' + ymd(new Date());
+  $('n').textContent = title + (daily ? ' · ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '');
+  var t = $('t'), timer = null; t.placeholder = p.get('hint') || 'Write it down, then let it go.'; t.value = store(key) || '';
+  t.oninput = function () { $('s').textContent = 'Saving…'; clearTimeout(timer); timer = setTimeout(function () { store(key, t.value); $('s').textContent = 'Saved on this device'; }, 400); };
+})();
+</script>
+</body>
+</html>

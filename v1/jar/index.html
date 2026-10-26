@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Savings jar · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; --sand: #D9C9B0; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; --sand: #8A7B64; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; --sand:#D9C9B0; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; --sand:#8A7B64; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 2px; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
+  .name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .big { font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible, textarea:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .row { display: flex; align-items: center; gap: 14px; }
+  .jar { flex: none; width: 58px; height: 76px; }
+  .jar .gl { fill: none; stroke: var(--line); stroke-width: 2.5; }
+  .jar .lid { fill: var(--line); }
+  .jar .fill { fill: var(--sand); transition: y .6s ease, height .6s ease; }
+  .col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .btns { display: flex; gap: 6px; margin-top: 4px; }
+  .btns button { padding: 6px 11px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="row">
+    <svg class="jar" viewBox="0 0 58 76" aria-hidden="true">
+      <defs><clipPath id="cp"><path d="M12 18 H46 V22 Q52 26 52 34 V64 Q52 72 44 72 H14 Q6 72 6 64 V34 Q6 26 12 22 Z"/></clipPath></defs>
+      <rect class="fill" id="fl" x="0" y="72" width="58" height="0" clip-path="url(#cp)"/>
+      <path class="gl" d="M12 18 H46 V22 Q52 26 52 34 V64 Q52 72 44 72 H14 Q6 72 6 64 V34 Q6 26 12 22 Z"/>
+      <rect class="lid" x="10" y="8" width="38" height="8" rx="3"/>
+    </svg>
+    <div class="col"><div class="l" id="n">Savings</div><div class="big" id="v">$0</div><div class="l2" id="g"></div>
+      <div class="btns"><button class="g" id="m">− </button><button id="a">+ </button></div></div>
+  </div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var label = (p.get('label') || 'Emergency fund').slice(0, 40), goal = Math.max(1, parseFloat(p.get('goal')) || 6000);
+  var step = Math.max(1, parseFloat(p.get('step')) || 50), cur = (p.get('currency') || '$').slice(0, 3);
+  var key = 'wkd-jar-' + label.toLowerCase(), v = parseFloat(store(key)); if (isNaN(v)) v = Math.max(0, parseFloat(p.get('saved')) || 0);
+  $('n').textContent = label; $('a').textContent = '+ ' + cur + step; $('m').textContent = '− ' + cur + step;
+  function fmt(x) { return cur + Math.round(x).toLocaleString('en-US'); }
+  function draw() {
+    var r = Math.min(1, v / goal), h = 54 * r;
+    $('fl').setAttribute('y', 72 - h); $('fl').setAttribute('height', h);
+    $('v').innerHTML = fmt(v) + '<small>' + Math.floor(r * 100) + '%</small>';
+    $('g').textContent = v >= goal ? 'Goal reached · ' + fmt(goal) : fmt(goal - v) + ' to go of ' + fmt(goal);
+    store(key, String(v));
+  }
+  $('a').onclick = function () { v += step; draw(); };
+  $('m').onclick = function () { v = Math.max(0, v - step); draw(); };
+  draw();
+})();
+</script>
+</body>
+</html>

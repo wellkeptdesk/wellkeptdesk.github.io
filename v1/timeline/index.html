@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Day timeline · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; --sand: #D9C9B0; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; --sand: #8A7B64; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; --sand:#D9C9B0; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; --sand:#8A7B64; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 2px; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
+  .name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .big { font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible, textarea:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .tl { position: relative; height: 34px; border-radius: 8px; background: var(--track); display: flex; overflow: hidden; }
+  .bk { height: 100%; border-right: 2px solid var(--tile); box-sizing: border-box; background: var(--tile); opacity: .9; }
+  .bk:nth-child(odd) { background: var(--sand); opacity: .55; } .bk:nth-child(even) { background: var(--line); opacity: .35; }
+  .bk.now { opacity: 1; }
+  .nl { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); border-radius: 1px; }
+  .ax { display: flex; justify-content: space-between; font-size: 10px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div><div class="l" id="nowl">Now</div><div class="name" id="cur">--</div></div><div class="l2" id="left"></div></div>
+  <div class="tl" id="tl"><div class="nl" id="nl"></div></div>
+  <div class="ax" id="ax"></div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function hm(s) { var a = String(s).split(':'); return (parseInt(a[0], 10) || 0) + (parseInt(a[1], 10) || 0) / 60; }
+  var raw = p.get('blocks') || '7-9 Morning routine,9-12 Deep work,12-13 Lunch,13-17 Meetings and admin,17-19 Move,19-22 Evening';
+  var B = raw.split(',').map(function (s) { var m = s.trim().match(/^(\d{1,2}(?::\d{2})?)\s*-\s*(\d{1,2}(?::\d{2})?)\s+(.+)$/); return m ? { a: hm(m[1]), b: hm(m[2]), t: m[3].slice(0, 40) } : null; }).filter(Boolean).slice(0, 10);
+  if (!B.length) B = [{ a: 9, b: 17, t: 'Work' }];
+  B.sort(function (x, y) { return x.a - y.a; });
+  var S = B[0].a, E = B[B.length - 1].b, span = Math.max(1, E - S), tl = $('tl');
+  function lab(h) { var H = Math.floor(h), m = Math.round((h - H) * 60); return (H < 10 ? '0' : '') + H + ':' + (m < 10 ? '0' : '') + m; }
+  B.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'bk'; d.style.marginLeft = (i ? (x.a - B[i - 1].b) / span * 100 : 0) + '%'; d.style.width = (x.b - x.a) / span * 100 + '%'; d.title = lab(x.a) + '-' + lab(x.b) + ' ' + x.t; x.el = d; tl.insertBefore(d, $('nl')); });
+  $('ax').innerHTML = '<span>' + lab(S) + '</span><span>' + lab(S + span / 2) + '</span><span>' + lab(E) + '</span>';
+  function run() {
+    var n = new Date(), h = n.getHours() + n.getMinutes() / 60, cur = null, next = null;
+    B.forEach(function (x) { x.el.className = 'bk'; if (h >= x.a && h < x.b) cur = x; else if (!next && x.a > h) next = x; });
+    var nl = $('nl'); nl.style.display = h >= S && h <= E ? '' : 'none'; nl.style.left = 'calc(' + ((h - S) / span * 100) + '% - 1px)';
+    if (cur) { cur.el.className = 'bk now'; $('nowl').textContent = 'Now · until ' + lab(cur.b); $('cur').textContent = cur.t; var r = Math.round((cur.b - h) * 60); $('left').textContent = (r >= 60 ? Math.floor(r / 60) + 'h ' : '') + r % 60 + 'm left'; }
+    else if (next) { $('nowl').textContent = 'Next · ' + lab(next.a); $('cur').textContent = next.t; $('left').textContent = 'Free time'; }
+    else { $('nowl').textContent = 'Day done'; $('cur').textContent = 'Rest well'; $('left').textContent = 'Plan tomorrow'; }
+  }
+  run(); setInterval(run, 30 * 1000);
+})();
+</script>
+</body>
+</html>

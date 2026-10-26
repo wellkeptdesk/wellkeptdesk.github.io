@@ -1,0 +1,12 @@
+# Cloudflare Pages headers. Widgets are made to be embedded in Notion, so framing is allowed.
+/*
+  Content-Security-Policy: frame-ancestors *
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: geolocation=(), camera=(), microphone=()
+
+/v1/*
+  Cache-Control: public, max-age=3600
+
+/v1/covers/*
+  Cache-Control: public, max-age=604800
