@@ -36,7 +36,7 @@
 </div>
 <script>
 (function () {
-  var q = new URLSearchParams(location.search);
+  var q = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
   var $ = function (id) { return document.getElementById(id); };
   var D = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];

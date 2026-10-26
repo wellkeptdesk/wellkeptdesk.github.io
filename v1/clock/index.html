@@ -58,7 +58,7 @@
 </div>
 <script>
 (function () {
-  var q = new URLSearchParams(location.search);
+  var q = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
   var userLang = navigator.language || 'en-US', tz = q.get('tz') || undefined;
   var cycle = ''; try { cycle = new Intl.DateTimeFormat(userLang, { hour: 'numeric' }).resolvedOptions().hourCycle || ''; } catch (e) {}

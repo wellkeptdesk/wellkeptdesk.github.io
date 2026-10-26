@@ -42,7 +42,7 @@
 </div>
 <script>
 (function () {
-  var p = new URLSearchParams(location.search);
+  var p = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
   var $ = function (i) { return document.getElementById(i); }, NS = 'http://www.w3.org/2000/svg';
   var type = p.get('type') || 'bar', unit = (p.get('unit') || '').slice(0, 8), goal = parseFloat(p.get('goal'));

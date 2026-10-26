@@ -35,7 +35,7 @@
 </div>
 <script>
 (function () {
-  var q = new URLSearchParams(location.search);
+  var q = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
   var $ = function (id) { return document.getElementById(id); };
   function arch(p) { $('fg').style.strokeDashoffset = String(100 - Math.max(0, Math.min(100, p))); }
