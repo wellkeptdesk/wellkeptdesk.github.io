@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Life in years · WellKeptDesk</title>
+<style>
+  :root { --ink: #2F3332; --muted: #7C8279; --line: #6B8071; --track: #E7E5DF; --tile: #F4F2EE; --btn: #2F3332; --btnt: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ECEBE6; --muted: #A3A89F; --line: #9DAE9F; --track: #3A3F3C; --tile: #2A2E2C; --btn: #ECEBE6; --btnt: #222624; } }
+  html[data-theme="light"] { --ink:#2F3332; --muted:#7C8279; --line:#6B8071; --track:#E7E5DF; --tile:#F4F2EE; --btn:#2F3332; --btnt:#fff; }
+  html[data-theme="dark"]  { --ink:#ECEBE6; --muted:#A3A89F; --line:#9DAE9F; --track:#3A3F3C; --tile:#2A2E2C; --btn:#ECEBE6; --btnt:#222624; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .big { color: var(--ink); font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .big small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 4px; letter-spacing: 0; }
+  .l { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .l2 { color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button { font: 600 12px/1 inherit; font-family: inherit; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: var(--btn); color: var(--btnt); }
+  button.g { background: var(--tile); color: var(--ink); }
+  button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 2px; }
+  .top { display: flex; align-items: baseline; gap: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; }
+  .grid i { aspect-ratio: 1; border-radius: 2px; background: var(--track); }
+  .grid i.p { background: var(--line); }
+  .grid i.n { background: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="big" id="t">--</div><div class="col"><div class="l" id="l">Add ?born=YYYY-MM-DD</div><div class="l2" id="s">Each square is one year</div></div></div>
+  <div class="grid" id="g" aria-hidden="true"></div>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var th = p.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  var $ = function (i) { return document.getElementById(i); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var years = Math.max(40, Math.min(120, parseInt(p.get('years'), 10) || 80));
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.get('born') || ''), age = -1;
+  if (m) { var b = new Date(+m[1], +m[2] - 1, +m[3]); age = (Date.now() - b) / 31557600000; }
+  var g = $('g'); for (var i = 0; i < years; i++) { var c = document.createElement('i'); if (age >= 0) { if (i < Math.floor(age)) c.className = 'p'; else if (i === Math.floor(age)) c.className = 'n'; } g.appendChild(c); }
+  if (age >= 0) {
+    var weeks = Math.floor(age * 52.1775), left = Math.max(0, Math.round((years - age) * 52.1775));
+    $('t').innerHTML = Math.floor(age) + '<small>yrs</small>';
+    $('l').textContent = weeks.toLocaleString('en-US') + ' weeks lived';
+    $('s').textContent = left.toLocaleString('en-US') + ' weeks left to ' + years;
+  }
+})();
+</script>
+</body>
+</html>
