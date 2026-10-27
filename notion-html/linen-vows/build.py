@@ -109,6 +109,41 @@ document.getElementById('m').onclick=()=>{st.n=Math.max(0,st.n-1);store.set(st);
 document.getElementById('g').onclick=()=>{document.getElementById('ft').value=st.total;S.classList.add('on')};document.getElementById('cx').onclick=()=>S.classList.remove('on');
 S.onsubmit=e=>{e.preventDefault();st.total=Math.max(1,parseInt(document.getElementById('ft').value)||80);store.set(st);S.classList.remove('on');draw()};draw();''')
 
+W['date']=dict(title='Date card',maxw=240,pad='12px 14px 12px',css='''
+.card{display:flex;align-items:center;gap:14px}
+.cal{position:relative;width:64px;height:68px;flex:none}
+.cal svg{width:100%;height:100%;display:block}
+.dn{position:absolute;left:0;right:0;top:20px;text-align:center;font-size:30px;font-weight:600;line-height:1;color:var(--deep)}
+.mo{position:absolute;left:0;right:0;top:8px;text-align:center;font-size:8.5px;letter-spacing:.2em;color:var(--card);font-weight:600;text-transform:uppercase}
+.wd{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:11px;color:var(--mute);margin-top:4px;letter-spacing:.02em}
+.bar{height:4px;border-radius:3px;background:var(--band);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--main);border-radius:3px}''',
+html='''<div class="card"><div class="cal"><svg viewBox="0 0 64 68"><path id="sp" d="" fill="var(--band)" filter="url(#rough)"/><rect x="6" y="8" width="52" height="54" rx="8" fill="var(--card)" stroke="var(--line)"/><path d="M6 16a8 8 0 0 1 8-8h36a8 8 0 0 1 8 8v8H6z" fill="var(--main)"/></svg><div class="mo" id="mo"></div><div class="dn serif" id="dn"></div></div>
+<div><div class="wd serif" id="wd"></div><div class="sub" id="sub"></div><div class="bar"><i id="bar"></i></div></div></div>''',
+js='''document.getElementById('sp').setAttribute('d',seal(32,34,31,28,16));
+function tick(){const n=new Date(),y0=new Date(n.getFullYear(),0,0),doy=dayDiff(y0,n),len=(n.getFullYear()%4==0&&(n.getFullYear()%100!=0||n.getFullYear()%400==0))?366:365;
+const t=new Date(Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()));const dn=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-dn);const wk=Math.ceil(((t-Date.UTC(t.getUTCFullYear(),0,1))/864e5+1)/7);
+document.getElementById('mo').textContent=n.toLocaleDateString('en-GB',{month:'short'});document.getElementById('dn').textContent=n.getDate();
+document.getElementById('wd').textContent=n.toLocaleDateString('en-GB',{weekday:'long'});
+document.getElementById('sub').textContent='Week '+wk+' \u00b7 day '+doy+'/'+len;document.getElementById('bar').style.width=(doy/len*100)+'%'}
+tick();setInterval(tick,6e4);''')
+
+W['moon']=dict(title='Moon phase',maxw=240,pad='12px 14px 12px',css='''
+.card{display:flex;align-items:center;gap:14px}.m{width:60px;height:60px;flex:none}.m svg{width:100%;height:100%;display:block}
+.nm{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:11px;color:var(--mute);margin-top:4px;line-height:1.4}''',
+html='''<div class="card"><div class="m"><svg viewBox="0 0 60 60"><defs><clipPath id="cp"><circle cx="30" cy="30" r="25"/></clipPath></defs><circle cx="30" cy="30" r="25" fill="var(--line)" opacity=".7"/><path id="lit" fill="var(--main)" clip-path="url(#cp)" filter="url(#rough)"/></svg></div>
+<div><div class="cap">Tonight\u2019s moon</div><div class="nm serif" id="nm"></div><div class="sub" id="sub"></div></div></div>''',
+js='''const SYN=29.530588853,REF=Date.UTC(2000,0,6,18,14);
+function tick(){const n=new Date();let a=((n-REF)/864e5/SYN)%1;if(a<0)a+=1;
+const ill=(1-Math.cos(a*2*Math.PI))/2,names=['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
+const nm=names[Math.floor(a*8+.5)%8];document.getElementById('nm').textContent=nm;
+const nextFull=a<.5?(.5-a)*SYN:(1.5-a)*SYN,nextNew=(1-a)*SYN;
+document.getElementById('sub').textContent=Math.round(ill*100)+'% lit \u00b7 '+(a>.47&&a<.56?'around its fullest':'full in '+Math.round(nextFull)+' days');
+const R=25,cx=30,cy=30,k=Math.cos(a*2*Math.PI),rx=Math.abs(k)*R,waxing=a<.5;
+const outer=waxing?1:0,sweepOuter=outer,term=k>0?(waxing?0:1):(waxing?1:0);
+let d;if(a<.015||a>.985)d='';else{const x=cx+(waxing?1:-1)*0;d='M'+cx+' '+(cy-R)+' A'+R+' '+R+' 0 0 '+sweepOuter+' '+cx+' '+(cy+R)+' A'+rx+' '+R+' 0 0 '+term+' '+cx+' '+(cy-R)+'Z'}
+document.getElementById('lit').setAttribute('d',d)}
+tick();setInterval(tick,36e5);''')
+
 for k,w in W.items():
     h=base
     for a,b in [('__TITLE__',w['title']),('__MAXW__',str(w['maxw'])),('__PAD__',w['pad']),('__CSS__',w['css']),('__HTML__',w['html']),('__JS__',w['js']),('__ID__',k)]:

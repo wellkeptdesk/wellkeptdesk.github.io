@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moon phase · Linen Vows</title>
+<style>
+:root{--bg:#F8F2EE;--band:#F0E4DE;--main:#BC8F91;--deep:#7C5258;--acc:#A99B8B;--ink:#38322F;--mute:#7E7570;--line:#E4D8D0;--card:#FCF8F5}
+@media (prefers-color-scheme:dark){:root{--bg:#262120;--band:#332A29;--main:#CFA3A5;--deep:#E6C9CB;--acc:#B5A897;--ink:#EFE8E4;--mute:#A89E99;--line:#413635;--card:#2B2524}}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#fff}
+@media (prefers-color-scheme:dark){html,body{background:#191919}}
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);display:grid;place-items:center;padding:6px;overflow:hidden}
+.card{position:relative;width:100%;max-width:240px;background:var(--bg);border-radius:14px;padding:12px 14px 12px;overflow:hidden;isolation:isolate}
+.card::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .38 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.serif{font-family:"Cormorant Garamond","Cormorant",Georgia,"Times New Roman",serif}
+.cap{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.gear{position:absolute;top:7px;right:8px;width:22px;height:22px;border-radius:50%;opacity:.0;transition:opacity .2s;display:grid;place-items:center;color:var(--mute)}
+.card:hover .gear,.gear:focus-visible{opacity:.85}
+.set{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;justify-content:center;gap:7px;padding:14px;z-index:5}
+.set.on{display:flex}
+.set label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600;display:flex;flex-direction:column;gap:3px}
+.set input,.set select{font:13px inherit;font-family:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%}
+.set .row{display:flex;gap:6px}
+.btn{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:7px 10px;border-radius:999px;background:var(--deep);color:var(--bg)}
+.btn.ghost{background:var(--band);color:var(--ink)}
+.hint{font-size:11px;color:var(--mute)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.card{display:flex;align-items:center;gap:14px}.m{width:60px;height:60px;flex:none}.m svg{width:100%;height:100%;display:block}
+.nm{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:11px;color:var(--mute);margin-top:4px;line-height:1.4}</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter>
+<filter id="wash" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="9" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="5"/></filter>
+</defs></svg>
+<div class="card"><div class="m"><svg viewBox="0 0 60 60"><defs><clipPath id="cp"><circle cx="30" cy="30" r="25"/></clipPath></defs><circle cx="30" cy="30" r="25" fill="var(--line)" opacity=".7"/><path id="lit" fill="var(--main)" clip-path="url(#cp)" filter="url(#rough)"/></svg></div>
+<div><div class="cap">Tonight’s moon</div><div class="nm serif" id="nm"></div><div class="sub" id="sub"></div></div></div>
+<script>
+const KEY='lv:moon';
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}};
+function seal(cx,cy,R,r,n){let p='';for(let i=0;i<=n*2;i++){const a=i/(n*2)*Math.PI*2-Math.PI/2,rr=i%2?r:R;p+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(2)+' '+(cy+rr*Math.sin(a)).toFixed(2)}return p+'Z'}
+const gearSvg='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+document.querySelectorAll('.gear').forEach(g=>{g.innerHTML=gearSvg;g.setAttribute('aria-label','Settings')});
+const fmtDate=(d,o)=>d.toLocaleDateString('en-GB',o||{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+const parseD=s=>{if(!s)return null;const [y,m,d]=s.split('-').map(Number);return y?new Date(y,m-1,d):null};
+const dayDiff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+const SYN=29.530588853,REF=Date.UTC(2000,0,6,18,14);
+function tick(){const n=new Date();let a=((n-REF)/864e5/SYN)%1;if(a<0)a+=1;
+const ill=(1-Math.cos(a*2*Math.PI))/2,names=['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
+const nm=names[Math.floor(a*8+.5)%8];document.getElementById('nm').textContent=nm;
+const nextFull=a<.5?(.5-a)*SYN:(1.5-a)*SYN,nextNew=(1-a)*SYN;
+document.getElementById('sub').textContent=Math.round(ill*100)+'% lit · '+(a>.47&&a<.56?'around its fullest':'full in '+Math.round(nextFull)+' days');
+const R=25,cx=30,cy=30,k=Math.cos(a*2*Math.PI),rx=Math.abs(k)*R,waxing=a<.5;
+const outer=waxing?1:0,sweepOuter=outer,term=k>0?(waxing?0:1):(waxing?1:0);
+let d;if(a<.015||a>.985)d='';else{const x=cx+(waxing?1:-1)*0;d='M'+cx+' '+(cy-R)+' A'+R+' '+R+' 0 0 '+sweepOuter+' '+cx+' '+(cy+R)+' A'+rx+' '+R+' 0 0 '+term+' '+cx+' '+(cy-R)+'Z'}
+document.getElementById('lit').setAttribute('d',d)}
+tick();setInterval(tick,36e5);
+</script></body></html>
