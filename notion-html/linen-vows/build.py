@@ -144,6 +144,21 @@ let d;if(a<.015||a>.985)d='';else{const x=cx+(waxing?1:-1)*0;d='M'+cx+' '+(cy-R)
 document.getElementById('lit').setAttribute('d',d)}
 tick();setInterval(tick,36e5);''')
 
+W['plate']=dict(title='Plate',maxw=240,pad='14px 16px 12px',css='''
+.card{display:flex;align-items:center;gap:13px}
+.m{position:relative;width:54px;height:54px;flex:none}.m svg{width:100%;height:100%;display:block}
+.m b{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:19px;color:var(--bg);letter-spacing:.02em;padding-bottom:2px}
+.nm{font-size:21px;font-weight:600;line-height:1.05;color:var(--ink)}
+.pg{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
+a.hm{display:inline-block;margin-top:5px;font-size:11px;color:var(--deep);text-decoration:none;border-bottom:1px solid var(--line)}a.hm:hover{border-color:var(--deep)}''',
+html='''<div class="card"><div class="m"><svg viewBox="0 0 54 54"><path id="sp" fill="var(--main)" filter="url(#rough)"/></svg><b class="serif" id="mo"></b></div><div><div class="nm serif" id="nm"></div><div class="pg" id="pg"></div><a class="hm" id="hm" target="_blank" rel="noopener" hidden>Back to Home</a></div></div>''',
+js='''document.getElementById('sp').setAttribute('d',seal(27,27,25,22.5,16));
+const q=new URLSearchParams(location.search),n=q.get('n')||'Ivy & Rowan',p=q.get('p')||'',h=q.get('h');
+document.getElementById('nm').textContent=n;
+document.getElementById('mo').textContent=n.split(/\\s*(?:&|and|\\+)\\s*/i).map(x=>x.trim()[0]||'').join('\u2009&\u2009');
+document.getElementById('pg').textContent=p;
+if(h&&/^https:\\/\\/(www\\.)?(notion\\.so|notion\\.site|app\\.notion\\.com)\\//.test(h)){const a=document.getElementById('hm');a.href=h;a.hidden=false}''')
+
 for k,w in W.items():
     h=base
     for a,b in [('__TITLE__',w['title']),('__MAXW__',str(w['maxw'])),('__PAD__',w['pad']),('__CSS__',w['css']),('__HTML__',w['html']),('__JS__',w['js']),('__ID__',k)]:
