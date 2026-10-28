@@ -173,7 +173,7 @@ document.getElementById('hh').setAttribute('transform','rotate('+(h*30)+' 60 60)
 document.getElementById('w').textContent=n.toLocaleDateString('en-GB',{weekday:'long'});document.getElementById('d').textContent=n.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}
 tick();setInterval(tick,1000);''')
 
-W['month']=dict(bare=True,title='Month calendar',maxw=240,pad='4px 2px 4px',bare=True,css='''
+W['month']=dict(title='Month calendar',maxw=240,pad='4px 2px 4px',bare=True,css='''
 .hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .mn{font-size:20px;font-weight:600;color:var(--ink);line-height:1}.mn small{font-size:12px;color:var(--mute);font-family:Inter,system-ui,sans-serif;font-weight:500;letter-spacing:.06em;margin-left:5px}
 .nv{display:flex;gap:2px}.nv button{width:22px;height:22px;border-radius:50%;color:var(--mute);display:grid;place-items:center}.nv button:hover{background:var(--band);color:var(--deep)}
