@@ -160,7 +160,7 @@ document.getElementById('pg').textContent=p;
 if(h&&/^https:\\/\\/(www\\.)?(notion\\.so|notion\\.site|app\\.notion\\.com)\\//.test(h)){const a=document.getElementById('hm');a.href=h;a.hidden=false}''')
 
 BARE='''html,body{background:transparent!important}.card{background:transparent!important;border-radius:0}.card::after{display:none}'''
-W['analog']=dict(bare=True,title='Analog clock',maxw=200,pad='4px 0 2px',bare=True,css='''
+W['analog']=dict(title='Analog clock',maxw=200,pad='4px 0 2px',bare=True,css='''
 .card{text-align:center}
 svg.face{width:100%;max-width:150px;height:auto;display:block;margin:0 auto}
 .d{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
