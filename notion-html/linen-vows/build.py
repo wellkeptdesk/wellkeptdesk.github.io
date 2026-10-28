@@ -159,9 +159,23 @@ document.getElementById('mo').textContent=n.split(/\\s*(?:&|and|\\+)\\s*/i).map(
 document.getElementById('pg').textContent=p;
 if(h&&/^https:\\/\\/(www\\.)?(notion\\.so|notion\\.site|app\\.notion\\.com)\\//.test(h)){const a=document.getElementById('hm');a.href=h;a.hidden=false}''')
 
+BARE='''html,body{background:transparent!important}.card{background:transparent!important;border-radius:0}.card::after{display:none}'''
+W['analog']=dict(title='Analog clock',maxw=200,pad='4px 0 2px',bare=True,css='''
+.card{text-align:center}
+svg.face{width:100%;max-width:150px;height:auto;display:block;margin:0 auto}
+.d{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
+.dn{font-size:21px;font-weight:600;color:var(--ink);line-height:1.1;margin-top:1px}''',
+html='''<div class="card"><svg class="face" viewBox="0 0 120 120"><circle cx="60" cy="60" r="55" fill="none" stroke="var(--main)" stroke-width="1.3" filter="url(#rough)"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--line)" stroke-width=".8"/><g id="tk"></g><path id="sp" fill="var(--acc)" opacity=".55" filter="url(#rough)"/><line id="hh" x1="60" y1="60" x2="60" y2="36" stroke="var(--deep)" stroke-width="3.2" stroke-linecap="round"/><line id="mh" x1="60" y1="60" x2="60" y2="22" stroke="var(--deep)" stroke-width="2" stroke-linecap="round"/><line id="sh" x1="60" y1="68" x2="60" y2="16" stroke="var(--acc)" stroke-width=".9" stroke-linecap="round"/><circle cx="60" cy="60" r="3.4" fill="var(--main)"/><circle cx="60" cy="60" r="1.3" fill="var(--bg)"/></svg><div class="d" id="w"></div><div class="dn serif" id="d"></div></div>''',
+js='''const tk=document.getElementById('tk');let g='';for(let i=0;i<60;i++){const a=i/60*2*Math.PI,big=i%5==0,r1=big?(i%15==0?42:44):47.5,r2=50;g+='<line x1="'+(60+r1*Math.sin(a)).toFixed(2)+'" y1="'+(60-r1*Math.cos(a)).toFixed(2)+'" x2="'+(60+r2*Math.sin(a)).toFixed(2)+'" y2="'+(60-r2*Math.cos(a)).toFixed(2)+'" stroke="'+(big?'var(--deep)':'var(--main)')+'" stroke-width="'+(big?1.4:.6)+'" stroke-linecap="round"/>'}tk.innerHTML=g;
+document.getElementById('sp').setAttribute('d',seal(60,13,3.4,2.6,8));
+function tick(){const n=new Date(),s=n.getSeconds(),m=n.getMinutes()+s/60,h=n.getHours()%12+m/60;
+document.getElementById('hh').setAttribute('transform','rotate('+(h*30)+' 60 60)');document.getElementById('mh').setAttribute('transform','rotate('+(m*6)+' 60 60)');document.getElementById('sh').setAttribute('transform','rotate('+(s*6)+' 60 60)');
+document.getElementById('w').textContent=n.toLocaleDateString('en-GB',{weekday:'long'});document.getElementById('d').textContent=n.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}
+tick();setInterval(tick,1000);''')
+
 for k,w in W.items():
     h=base
-    for a,b in [('__TITLE__',w['title']),('__MAXW__',str(w['maxw'])),('__PAD__',w['pad']),('__CSS__',w['css']),('__HTML__',w['html']),('__JS__',w['js']),('__ID__',k)]:
+    for a,b in [('__TITLE__',w['title']),('__MAXW__',str(w['maxw'])),('__PAD__',w['pad']),('__CSS__',w['css']+(BARE if w.get('bare') else '')),('__HTML__',w['html']),('__JS__',w['js']),('__ID__',k)]:
         h=h.replace(a,b)
     open(os.path.join(D,k+'.html'),'w').write(h)
 print(list(W))
