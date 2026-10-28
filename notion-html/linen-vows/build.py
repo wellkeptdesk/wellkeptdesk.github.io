@@ -147,7 +147,7 @@ tick();setInterval(tick,36e5);''')
 W['plate']=dict(bare=True,title='Plate',maxw=240,pad='14px 16px 12px',css='''
 .card{display:flex;align-items:center;gap:13px}
 .m{position:relative;width:54px;height:54px;flex:none}.m svg{width:100%;height:100%;display:block}
-.m b{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:19px;color:var(--bg);letter-spacing:.02em;padding-bottom:2px}
+.m b{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:14px;color:var(--bg);letter-spacing:0;padding-bottom:2px}
 .nm{font-size:21px;font-weight:600;line-height:1.05;color:var(--ink)}
 .pg{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
 a.hm{display:inline-block;margin-top:5px;font-size:11px;color:var(--deep);text-decoration:none;border-bottom:1px solid var(--line)}a.hm:hover{border-color:var(--deep)}''',
