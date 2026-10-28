@@ -3,7 +3,7 @@ import os,sys
 D=sys.argv[1]
 base=open(os.path.join(D,'_base.html')).read()
 W={}
-W['clock']=dict(title='Clock & date',maxw=240,pad='12px 16px 12px',css='''
+W['clock']=dict(bare=True,title='Clock & date',maxw=240,pad='12px 16px 12px',css='''
 .card{display:flex;align-items:center;gap:12px}
 .s{width:30px;height:30px;flex:none}
 .t{font-size:30px;font-weight:600;line-height:1;color:var(--ink)} .t small{font-size:14px;font-weight:500;color:var(--mute);margin-left:3px;font-family:Inter,system-ui,sans-serif;letter-spacing:.04em}
@@ -19,7 +19,7 @@ svg.main{width:100%;max-width:190px;height:auto;display:block;margin:0 auto}
 .lab{margin-top:2px}.dt{font-size:11.5px;color:var(--mute);margin-top:3px}
 .empty{padding:18px 6px}.empty .btn{margin-top:10px}'''
 def cd(idn,label,deflabel,title):
-    return dict(title=title,maxw=230,pad='12px 12px 12px',css=cd_css,html=f'''<div class="card"><button class="gear" id="g"></button>
+    return dict(bare=True,title=title,maxw=230,pad='12px 12px 12px',css=cd_css,html=f'''<div class="card"><button class="gear" id="g"></button>
 <div id="view"></div>
 <form class="set" id="set"><label>Label<input id="fl" maxlength="28" placeholder="{deflabel}"></label><label>{label}<input type="date" id="fd" required></label><label>Planning started<input type="date" id="fs"></label><div class="row"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" id="cx">Cancel</button></div></form></div>''',
     js=f'''const V=document.getElementById('view'),S=document.getElementById('set');let st=store.get();
@@ -35,7 +35,7 @@ draw();setInterval(draw,6e4);''')
 W['countdown']=cd('countdown','Wedding date','Days to I do','Countdown')
 W['honeymoon-countdown']=cd('honeymoon','Departure date','Until we fly','Honeymoon countdown')
 
-W['focus']=dict(title="This month's focus",maxw=300,pad='14px 16px 14px',css='''
+W['focus']=dict(bare=True,title="This month's focus",maxw=300,pad='14px 16px 14px',css='''
 .ph{font-size:22px;font-weight:600;line-height:1.1;margin:4px 0 8px;color:var(--deep)}
 .trail{display:flex;gap:4px;margin:2px 0 10px}.trail i{flex:1;height:4px;border-radius:3px;background:var(--band)}.trail i.on{background:var(--main)}.trail i.past{background:var(--acc);opacity:.55}
 ul{list-style:none}li{display:flex;gap:9px;align-items:center;font-size:12.5px;padding:6px 0;border-top:1px solid var(--line);cursor:pointer;user-select:none}
@@ -66,7 +66,7 @@ S.onsubmit=e=>{e.preventDefault();st.date=document.getElementById('fd').value;st
 CITIES=[('Amsterdam',52.37,4.90,'Europe/Amsterdam'),('Athens',37.98,23.73,'Europe/Athens'),('Auckland',-36.85,174.76,'Pacific/Auckland'),('Austin',30.27,-97.74,'America/Chicago'),('Bali',-8.65,115.22,'Asia/Makassar'),('Barcelona',41.39,2.17,'Europe/Madrid'),('Boston',42.36,-71.06,'America/New_York'),('Cancún',21.16,-86.85,'America/Cancun'),('Cape Town',-33.92,18.42,'Africa/Johannesburg'),('Charleston',32.78,-79.93,'America/New_York'),('Chicago',41.88,-87.63,'America/Chicago'),('Dubai',25.20,55.27,'Asia/Dubai'),('Dublin',53.35,-6.26,'Europe/Dublin'),('Dubrovnik',42.65,18.09,'Europe/Zagreb'),('Edinburgh',55.95,-3.19,'Europe/London'),('Florence',43.77,11.26,'Europe/Rome'),('Istanbul',41.01,28.98,'Europe/Istanbul'),('Lake Como',45.99,9.26,'Europe/Rome'),('Lisbon',38.72,-9.14,'Europe/Lisbon'),('London',51.51,-0.13,'Europe/London'),('Los Angeles',34.05,-118.24,'America/Los_Angeles'),('Melbourne',-37.81,144.96,'Australia/Melbourne'),('Mexico City',19.43,-99.13,'America/Mexico_City'),('Miami',25.76,-80.19,'America/New_York'),('Napa Valley',38.30,-122.29,'America/Los_Angeles'),('Nashville',36.16,-86.78,'America/Chicago'),('New York',40.71,-74.01,'America/New_York'),('Paris',48.86,2.35,'Europe/Paris'),('Provence',43.95,4.81,'Europe/Paris'),('Rome',41.90,12.50,'Europe/Rome'),('San Francisco',37.77,-122.42,'America/Los_Angeles'),('Santorini',36.39,25.46,'Europe/Athens'),('Seattle',47.61,-122.33,'America/Los_Angeles'),('Sydney',-33.87,151.21,'Australia/Sydney'),('Tuscany',43.32,11.33,'Europe/Rome'),('Toronto',43.65,-79.38,'America/Toronto'),('Vancouver',49.28,-123.12,'America/Vancouver')]
 copts=''.join(f'<option value="{c[0]}">{c[0]}</option>' for c in CITIES)
 cjs='const CITIES={'+','.join(f'"{c[0]}":[{c[1]},{c[2]},"{c[3]}"]' for c in CITIES)+'};'
-W['golden-hour']=dict(title='Golden hour',maxw=280,pad='12px 14px 12px',css='''
+W['golden-hour']=dict(bare=True,title='Golden hour',maxw=280,pad='12px 14px 12px',css='''
 svg.arc{width:100%;height:auto;display:block}
 .big{font-size:21px;font-weight:600;color:var(--deep);text-align:center;margin-top:-2px}
 .meta{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
@@ -87,7 +87,7 @@ function open(){document.getElementById('fd').value=st.date||'';document.getElem
 document.getElementById('g').onclick=open;document.getElementById('cx').onclick=()=>S.classList.remove('on');
 S.onsubmit=e=>{e.preventDefault();const c=document.getElementById('fc').value;st.date=document.getElementById('fd').value;if(c){const v=CITIES[c];st.city=c;st.lat=v[0];st.lon=v[1];st.tz=v[2]}else{const la=parseFloat(document.getElementById('flat').value),lo=parseFloat(document.getElementById('flon').value);if(isNaN(la)||isNaN(lo))return;st.city='';st.lat=la;st.lon=lo;st.tz=''}store.set(st);S.classList.remove('on');draw()};draw();''')
 
-W['vow-card']=dict(title='Vow card',maxw=320,pad='14px 18px 14px',css='''
+W['vow-card']=dict(bare=True,title='Vow card',maxw=320,pad='14px 18px 14px',css='''
 .q{font-size:19px;font-style:italic;line-height:1.35;min-height:52px;outline:none;margin-top:6px;color:var(--ink)}
 .q:empty::before{content:attr(data-ph);color:var(--mute)}
 .ft{display:flex;justify-content:space-between;align-items:center;margin-top:8px}.ft svg{width:26px;height:26px}
@@ -96,7 +96,7 @@ html='''<div class="card"><div class="cap">A line for my vows</div><div class="q
 js='''document.getElementById('sp').setAttribute('d',seal(15,15,13.5,12,14));const q=document.getElementById('q'),sv=document.getElementById('sv');let st=store.get();q.textContent=st.t||'';let tm;
 q.addEventListener('input',()=>{clearTimeout(tm);tm=setTimeout(()=>{st.t=q.textContent.slice(0,400);store.set(st);sv.classList.add('on');setTimeout(()=>sv.classList.remove('on'),1200)},400)});''')
 
-W['thank-you-tally']=dict(title='Thank-you tally',maxw=300,pad='14px 16px 14px',css='''
+W['thank-you-tally']=dict(bare=True,title='Thank-you tally',maxw=300,pad='14px 16px 14px',css='''
 .n{font-size:30px;font-weight:600;color:var(--deep);line-height:1;margin-top:6px}.n small{font-size:15px;color:var(--mute);font-weight:500}
 .dots{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin:10px 0}.dots svg{width:100%;height:auto;display:block}
 .ft{display:flex;justify-content:space-between;align-items:center}.pm{display:flex;gap:6px}.pm button{width:30px;height:30px;border-radius:50%;background:var(--band);font-size:17px;line-height:1;color:var(--deep)}.pm button.add{background:var(--main);color:var(--bg)}''',
@@ -109,7 +109,7 @@ document.getElementById('m').onclick=()=>{st.n=Math.max(0,st.n-1);store.set(st);
 document.getElementById('g').onclick=()=>{document.getElementById('ft').value=st.total;S.classList.add('on')};document.getElementById('cx').onclick=()=>S.classList.remove('on');
 S.onsubmit=e=>{e.preventDefault();st.total=Math.max(1,parseInt(document.getElementById('ft').value)||80);store.set(st);S.classList.remove('on');draw()};draw();''')
 
-W['date']=dict(title='Date card',maxw=240,pad='12px 14px 12px',css='''
+W['date']=dict(bare=True,title='Date card',maxw=240,pad='12px 14px 12px',css='''
 .card{display:flex;align-items:center;gap:14px}
 .cal{position:relative;width:64px;height:68px;flex:none}
 .cal svg{width:100%;height:100%;display:block}
@@ -127,7 +127,7 @@ document.getElementById('wd').textContent=n.toLocaleDateString('en-GB',{weekday:
 document.getElementById('sub').textContent='Week '+wk+' \u00b7 day '+doy+'/'+len;document.getElementById('bar').style.width=(doy/len*100)+'%'}
 tick();setInterval(tick,6e4);''')
 
-W['moon']=dict(title='Moon phase',maxw=240,pad='12px 14px 12px',css='''
+W['moon']=dict(bare=True,title='Moon phase',maxw=240,pad='12px 14px 12px',css='''
 .card{display:flex;align-items:center;gap:14px}.m{width:60px;height:60px;flex:none}.m svg{width:100%;height:100%;display:block}
 .nm{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:11px;color:var(--mute);margin-top:4px;line-height:1.4}''',
 html='''<div class="card"><div class="m"><svg viewBox="0 0 60 60"><defs><clipPath id="cp"><circle cx="30" cy="30" r="25"/></clipPath></defs><circle cx="30" cy="30" r="25" fill="var(--line)" opacity=".7"/><path id="lit" fill="var(--main)" clip-path="url(#cp)" filter="url(#rough)"/></svg></div>
@@ -144,7 +144,7 @@ let d;if(a<.015||a>.985)d='';else{const x=cx+(waxing?1:-1)*0;d='M'+cx+' '+(cy-R)
 document.getElementById('lit').setAttribute('d',d)}
 tick();setInterval(tick,36e5);''')
 
-W['plate']=dict(title='Plate',maxw=240,pad='14px 16px 12px',css='''
+W['plate']=dict(bare=True,title='Plate',maxw=240,pad='14px 16px 12px',css='''
 .card{display:flex;align-items:center;gap:13px}
 .m{position:relative;width:54px;height:54px;flex:none}.m svg{width:100%;height:100%;display:block}
 .m b{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:19px;color:var(--bg);letter-spacing:.02em;padding-bottom:2px}
@@ -160,7 +160,7 @@ document.getElementById('pg').textContent=p;
 if(h&&/^https:\\/\\/(www\\.)?(notion\\.so|notion\\.site|app\\.notion\\.com)\\//.test(h)){const a=document.getElementById('hm');a.href=h;a.hidden=false}''')
 
 BARE='''html,body{background:transparent!important}.card{background:transparent!important;border-radius:0}.card::after{display:none}'''
-W['analog']=dict(title='Analog clock',maxw=200,pad='4px 0 2px',bare=True,css='''
+W['analog']=dict(bare=True,title='Analog clock',maxw=200,pad='4px 0 2px',bare=True,css='''
 .card{text-align:center}
 svg.face{width:100%;max-width:150px;height:auto;display:block;margin:0 auto}
 .d{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
@@ -172,6 +172,26 @@ function tick(){const n=new Date(),s=n.getSeconds(),m=n.getMinutes()+s/60,h=n.ge
 document.getElementById('hh').setAttribute('transform','rotate('+(h*30)+' 60 60)');document.getElementById('mh').setAttribute('transform','rotate('+(m*6)+' 60 60)');document.getElementById('sh').setAttribute('transform','rotate('+(s*6)+' 60 60)');
 document.getElementById('w').textContent=n.toLocaleDateString('en-GB',{weekday:'long'});document.getElementById('d').textContent=n.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}
 tick();setInterval(tick,1000);''')
+
+W['month']=dict(bare=True,title='Month calendar',maxw=240,pad='4px 2px 4px',bare=True,css='''
+.hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.mn{font-size:20px;font-weight:600;color:var(--ink);line-height:1}.mn small{font-size:12px;color:var(--mute);font-family:Inter,system-ui,sans-serif;font-weight:500;letter-spacing:.06em;margin-left:5px}
+.nv{display:flex;gap:2px}.nv button{width:22px;height:22px;border-radius:50%;color:var(--mute);display:grid;place-items:center}.nv button:hover{background:var(--band);color:var(--deep)}
+.g{display:grid;grid-template-columns:repeat(7,1fr);row-gap:1px;text-align:center}
+.w{font-size:9px;letter-spacing:.1em;color:var(--mute);font-weight:600;padding:3px 0 4px}
+.c{position:relative;font-size:12px;line-height:26px;height:26px;color:var(--ink)}.c.o{color:var(--line);opacity:.0}.c.we{color:var(--mute)}
+.c.t{color:var(--bg);font-weight:600}.c.t svg{position:absolute;left:50%;top:50%;width:26px;height:26px;transform:translate(-50%,-50%);z-index:-1}.c.t span{position:relative}''',
+html='''<div class="card"><div class="hd"><div class="mn serif" id="mn"></div><div class="nv"><button id="pv" aria-label="Previous month"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7.5 2L3.5 6l4 4"/></svg></button><button id="nx" aria-label="Next month"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4.5 2l4 4-4 4"/></svg></button></div></div><div class="g" id="g"></div></div>''',
+js='''let v=new Date();v.setDate(1);const g=document.getElementById('g');
+function draw(){const y=v.getFullYear(),m=v.getMonth(),now=new Date();
+document.getElementById('mn').innerHTML=v.toLocaleDateString('en-GB',{month:'long'})+'<small>'+y+'</small>';
+let h='';['M','T','W','T','F','S','S'].forEach(d=>h+='<div class="w">'+d+'</div>');
+const first=(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate();
+for(let i=0;i<first;i++)h+='<div class="c o"></div>';
+for(let d=1;d<=dim;d++){const dow=(first+d-1)%7,t=y==now.getFullYear()&&m==now.getMonth()&&d==now.getDate();
+h+=t?'<div class="c t"><svg viewBox="0 0 30 30"><path d="'+seal(15,15,13.5,12,14)+'" fill="var(--deep)" filter="url(#rough)"/></svg><span>'+d+'</span></div>':'<div class="c'+(dow>4?' we':'')+'">'+d+'</div>'}
+g.innerHTML=h}
+document.getElementById('pv').onclick=()=>{v.setMonth(v.getMonth()-1);draw()};document.getElementById('nx').onclick=()=>{v.setMonth(v.getMonth()+1);draw()};draw();''')
 
 for k,w in W.items():
     h=base
