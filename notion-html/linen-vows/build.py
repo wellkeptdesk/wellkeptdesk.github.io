@@ -7,7 +7,7 @@ W['clock']=dict(bare=True,title='Clock & date',maxw=240,pad='12px 16px 12px',css
 .card{display:flex;align-items:center;gap:12px}
 .s{width:30px;height:30px;flex:none}
 .t{font-size:30px;font-weight:600;line-height:1;color:var(--ink)} .t small{font-size:14px;font-weight:500;color:var(--mute);margin-left:3px;font-family:Inter,system-ui,sans-serif;letter-spacing:.04em}
-.d{font-size:11.5px;color:var(--mute);margin-top:5px;letter-spacing:.02em}''',
+.d{font-size:12.5px;color:var(--mute);margin-top:5px;letter-spacing:.02em}''',
 html='''<div class="card"><svg class="s" viewBox="0 0 40 40"><path id="sp" fill="var(--main)" filter="url(#rough)"/><circle cx="20" cy="20" r="8.5" fill="none" stroke="var(--bg)" stroke-width="1.4"/><path d="M20 14.5c2.6 2.4 2.6 8.6 0 11-2.6-2.4-2.6-8.6 0-11z" fill="var(--bg)" opacity=".9"/></svg><div><div class="t serif" id="t"></div><div class="d" id="d"></div></div></div>''',
 js='''document.getElementById('sp').setAttribute('d',seal(20,20,18,16,14));
 function tick(){const n=new Date();let h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0'),ap=h<12?'am':'pm';h=h%12||12;
@@ -16,13 +16,13 @@ tick();setInterval(tick,1000*5);''')
 
 cd_css='''.card{text-align:center}
 svg.main{width:100%;max-width:190px;height:auto;display:block;margin:0 auto}
-.lab{margin-top:2px}.dt{font-size:11.5px;color:var(--mute);margin-top:3px}
+.lab{margin-top:2px}.dt{font-size:12.5px;color:var(--mute);margin-top:3px}
 .empty{padding:18px 6px}.empty .btn{margin-top:10px}'''
 def cd(idn,label,deflabel,title):
     return dict(bare=True,title=title,maxw=230,pad='12px 12px 12px',css=cd_css,html=f'''<div class="card"><button class="gear" id="g"></button>
 <div id="view"></div>
 <form class="set" id="set"><label>Label<input id="fl" maxlength="28" placeholder="{deflabel}"></label><label>{label}<input type="date" id="fd" required></label><label>Planning started<input type="date" id="fs"></label><div class="row"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" id="cx">Cancel</button></div></form></div>''',
-    js=f'''const V=document.getElementById('view'),S=document.getElementById('set');let st=store.get();
+    js=f'''const V=document.getElementById('view'),S=document.getElementById('set');let st=store.get();{{const q=new URLSearchParams(location.search);if(!st.date&&q.get('date'))st=Object.assign({{}},st,{{date:q.get('date'),start:q.get('start')||st.start,label:q.get('label')||st.label}})}}
 function draw(){{const d=parseD(st.date),lab=st.label||'{deflabel}';
 if(!d){{V.innerHTML='<div class="empty"><div class="cap">'+lab+'</div><div class="serif" style="font-size:20px;margin-top:8px">Set your date</div><button class="btn" id="go">Add date</button></div>';document.getElementById('go').onclick=open;return}}
 const now=new Date(),left=dayDiff(now,d),start=parseD(st.start)||parseD(st.saved)||now,tot=Math.max(1,dayDiff(start,d)),p=left<=0?1:Math.min(1,Math.max(0.02,1-left/tot));
@@ -69,7 +69,7 @@ cjs='const CITIES={'+','.join(f'"{c[0]}":[{c[1]},{c[2]},"{c[3]}"]' for c in CITI
 W['golden-hour']=dict(bare=True,title='Golden hour',maxw=280,pad='12px 14px 12px',css='''
 svg.arc{width:100%;height:auto;display:block}
 .big{font-size:21px;font-weight:600;color:var(--deep);text-align:center;margin-top:-2px}
-.meta{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
+.meta{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
 .empty{text-align:center;padding:14px 4px}.empty .btn{margin-top:10px}''',
 html=f'''<div class="card"><button class="gear" id="g"></button><div id="view"></div>
 <form class="set" id="set"><label>Wedding date<input type="date" id="fd" required></label><label>Place<select id="fc"><option value="">Other (enter below)</option>{copts}</select></label><div class="row"><label>Latitude<input id="flat" inputmode="decimal" placeholder="51.5"></label><label>Longitude<input id="flon" inputmode="decimal" placeholder="-0.1"></label></div><div class="row"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" id="cx">Cancel</button></div></form></div>''',
@@ -115,7 +115,7 @@ W['date']=dict(bare=True,title='Date card',maxw=240,pad='12px 14px 12px',css='''
 .cal svg{width:100%;height:100%;display:block}
 .dn{position:absolute;left:0;right:0;top:20px;text-align:center;font-size:30px;font-weight:600;line-height:1;color:var(--deep)}
 .mo{position:absolute;left:0;right:0;top:8px;text-align:center;font-size:8.5px;letter-spacing:.2em;color:var(--card);font-weight:600;text-transform:uppercase}
-.wd{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:11px;color:var(--mute);margin-top:4px;letter-spacing:.02em}
+.wd{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:12px;color:var(--mute);margin-top:4px;letter-spacing:.02em}
 .bar{height:4px;border-radius:3px;background:var(--band);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--main);border-radius:3px}''',
 html='''<div class="card"><div class="cal"><svg viewBox="0 0 64 68"><path id="sp" d="" fill="var(--band)" filter="url(#rough)"/><rect x="6" y="8" width="52" height="54" rx="8" fill="var(--card)" stroke="var(--line)"/><path d="M6 16a8 8 0 0 1 8-8h36a8 8 0 0 1 8 8v8H6z" fill="var(--main)"/></svg><div class="mo" id="mo"></div><div class="dn serif" id="dn"></div></div>
 <div><div class="wd serif" id="wd"></div><div class="sub" id="sub"></div><div class="bar"><i id="bar"></i></div></div></div>''',
@@ -129,7 +129,7 @@ tick();setInterval(tick,6e4);''')
 
 W['moon']=dict(bare=True,title='Moon phase',maxw=240,pad='12px 14px 12px',css='''
 .card{display:flex;align-items:center;gap:14px}.m{width:60px;height:60px;flex:none}.m svg{width:100%;height:100%;display:block}
-.nm{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:11px;color:var(--mute);margin-top:4px;line-height:1.4}''',
+.nm{font-size:19px;font-weight:600;line-height:1.1}.sub{font-size:12px;color:var(--mute);margin-top:4px;line-height:1.4}''',
 html='''<div class="card"><div class="m"><svg viewBox="0 0 60 60"><defs><clipPath id="cp"><circle cx="30" cy="30" r="25"/></clipPath></defs><circle cx="30" cy="30" r="25" fill="var(--line)" opacity=".7"/><path id="lit" fill="var(--main)" clip-path="url(#cp)" filter="url(#rough)"/></svg></div>
 <div><div class="cap">Tonight\u2019s moon</div><div class="nm serif" id="nm"></div><div class="sub" id="sub"></div></div></div>''',
 js='''const SYN=29.530588853,REF=Date.UTC(2000,0,6,18,14);
@@ -149,8 +149,8 @@ W['plate']=dict(bare=True,title='Plate',maxw=240,pad='14px 16px 12px',css='''
 .m{position:relative;width:54px;height:54px;flex:none}.m svg{width:100%;height:100%;display:block}
 .m b{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:14px;color:var(--bg);letter-spacing:0;padding-bottom:2px}
 .nm{font-size:21px;font-weight:600;line-height:1.05;color:var(--ink)}
-.pg{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
-a.hm{display:inline-block;margin-top:5px;font-size:11px;color:var(--deep);text-decoration:none;border-bottom:1px solid var(--line)}a.hm:hover{border-color:var(--deep)}''',
+.pg{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
+a.hm{display:inline-block;margin-top:5px;font-size:12px;color:var(--deep);text-decoration:none;border-bottom:1px solid var(--line)}a.hm:hover{border-color:var(--deep)}''',
 html='''<div class="card"><div class="m"><svg viewBox="0 0 54 54"><path id="sp" fill="var(--main)" filter="url(#rough)"/></svg><b class="serif" id="mo"></b></div><div><div class="nm serif" id="nm"></div><div class="pg" id="pg"></div><a class="hm" id="hm" target="_blank" rel="noopener" hidden>Back to Home</a></div></div>''',
 js='''document.getElementById('sp').setAttribute('d',seal(27,27,25,22.5,16));
 const q=new URLSearchParams(location.search),n=q.get('n')||'Ivy & Rowan',p=q.get('p')||'',h=q.get('h');
@@ -163,7 +163,7 @@ BARE='''html,body{background:transparent!important}.card{background:transparent!
 W['analog']=dict(title='Analog clock',maxw=200,pad='4px 0 2px',bare=True,css='''
 .card{text-align:center}
 svg.face{width:100%;max-width:150px;height:auto;display:block;margin:0 auto}
-.d{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
+.d{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:6px}
 .dn{font-size:21px;font-weight:600;color:var(--ink);line-height:1.1;margin-top:1px}''',
 html='''<div class="card"><svg class="face" viewBox="0 0 120 120"><circle cx="60" cy="60" r="55" fill="none" stroke="var(--main)" stroke-width="1.3" filter="url(#rough)"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--line)" stroke-width=".8"/><g id="tk"></g><path id="sp" fill="var(--acc)" opacity=".55" filter="url(#rough)"/><line id="hh" x1="60" y1="60" x2="60" y2="36" stroke="var(--deep)" stroke-width="3.2" stroke-linecap="round"/><line id="mh" x1="60" y1="60" x2="60" y2="22" stroke="var(--deep)" stroke-width="2" stroke-linecap="round"/><line id="sh" x1="60" y1="68" x2="60" y2="16" stroke="var(--acc)" stroke-width=".9" stroke-linecap="round"/><circle cx="60" cy="60" r="3.4" fill="var(--main)"/><circle cx="60" cy="60" r="1.3" fill="var(--bg)"/></svg><div class="d" id="w"></div><div class="dn serif" id="d"></div></div>''',
 js='''const tk=document.getElementById('tk');let g='';for(let i=0;i<60;i++){const a=i/60*2*Math.PI,big=i%5==0,r1=big?(i%15==0?42:44):47.5,r2=50;g+='<line x1="'+(60+r1*Math.sin(a)).toFixed(2)+'" y1="'+(60-r1*Math.cos(a)).toFixed(2)+'" x2="'+(60+r2*Math.sin(a)).toFixed(2)+'" y2="'+(60-r2*Math.cos(a)).toFixed(2)+'" stroke="'+(big?'var(--deep)':'var(--main)')+'" stroke-width="'+(big?1.4:.6)+'" stroke-linecap="round"/>'}tk.innerHTML=g;

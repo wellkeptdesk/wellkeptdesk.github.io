@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark">
 <title>__TITLE__ · Linen Vows</title>
 <style>
-:root{color-scheme:light dark;--bg:#F5F2EE;--band:#ECE6E1;--main:#B5A39B;--deep:#6E5F5B;--acc:#C9A9A6;--ink:#35302E;--mute:#7C7672;--line:#E2DAD4;--card:#FAF8F5}
+:root{color-scheme:light dark;--bg:#F5F2EE;--band:#ECE6E1;--main:#B5A39B;--deep:#6E5F5B;--acc:#C9A9A6;--ink:#35302E;--mute:#665F5B;--line:#E2DAD4;--card:#FAF8F5}
 @media (prefers-color-scheme:dark){:root{--bg:#252221;--band:#312C2B;--main:#C7B5AD;--deep:#E4D6D0;--acc:#C9A0A0;--ink:#EEE9E6;--mute:#A59D98;--line:#3E3836;--card:#2A2625}}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#fff}
@@ -10,18 +10,18 @@ body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;color:var
 .card{position:relative;width:100%;max-width:__MAXW__px;background:var(--bg);border-radius:14px;padding:__PAD__;overflow:hidden;isolation:isolate}
 .card::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .38 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 .serif{font-family:"Cormorant Garamond","Cormorant",Georgia,"Times New Roman",serif}
-.cap{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.cap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .gear{position:absolute;top:7px;right:8px;width:22px;height:22px;border-radius:50%;opacity:.0;transition:opacity .2s;display:grid;place-items:center;color:var(--mute)}
 .card:hover .gear,.gear:focus-visible{opacity:.85}
 .set{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;justify-content:center;gap:7px;padding:14px;z-index:5}
 .set.on{display:flex}
-.set label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600;display:flex;flex-direction:column;gap:3px}
+.set label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600;display:flex;flex-direction:column;gap:3px}
 .set input,.set select{font:13px inherit;font-family:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%}
 .set .row{display:flex;gap:6px}
-.btn{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:7px 10px;border-radius:999px;background:var(--deep);color:var(--bg)}
+.btn{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:7px 10px;border-radius:999px;background:var(--deep);color:var(--bg)}
 .btn.ghost{background:var(--band);color:var(--ink)}
-.hint{font-size:11px;color:var(--mute)}
+.hint{font-size:12px;color:var(--mute)}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>__CSS__</style></head><body>
