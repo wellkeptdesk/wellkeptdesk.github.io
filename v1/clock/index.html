@@ -44,6 +44,10 @@
   .sec { font-size: 11px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
   .date { font-size: 12.5px; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 1px; }
   @media (prefers-reduced-motion: reduce) { .go .flap, .go .flapb { animation: none; } }
+
+  /* optional graphite palette: add &palette=graphite to the URL */
+  html[data-palette="graphite"][data-theme="light"] { --ink:#2A2D30;--muted:#7A7F82;--line:#4A4F53;--accent:#4A4F53;--lit:#4A4F53;--track:#E3E5E3;--tile:#F6F6F4;--tile2:#E3E5E3;--digit:#2A2D30;--hinge:rgba(42,45,48,.14);--dark:#E3E5E3;--faint:#B9BDBE;--on:#F6F6F4;--btn:#2A2D30;--btnt:#fff; }
+  html[data-palette="graphite"][data-theme="dark"] { --ink:#ECEDEB;--muted:#A6AAAC;--line:#B9BDBE;--accent:#B9BDBE;--lit:#D5D8D7;--track:#3C4043;--tile:#2A2D30;--tile2:#222527;--digit:#ECEDEB;--hinge:rgba(0,0,0,.45);--dark:#3C4043;--faint:#6B7073;--on:#2A2D30;--btn:#ECEDEB;--btnt:#222527; }
 </style>
 </head>
 <body>
@@ -60,6 +64,7 @@
 (function () {
   var q = new URLSearchParams(location.search.replace(/&amp;/g, "&"));
   var th = q.get('theme'); if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+  if (q.get('palette') === 'graphite') document.documentElement.setAttribute('data-palette', 'graphite');
   var userLang = navigator.language || 'en-US', tz = q.get('tz') || undefined;
   var cycle = ''; try { cycle = new Intl.DateTimeFormat(userLang, { hour: 'numeric' }).resolvedOptions().hourCycle || ''; } catch (e) {}
   var h24 = q.has('24') || q.has('h24') ? true : (q.has('12') || q.has('h12')) ? false : (cycle === 'h23' || cycle === 'h24');
