@@ -10,6 +10,7 @@ Quiet, self-hosted widgets for Notion pages: clock, desk (clock + date + payday)
 1. Copy a widget link, e.g. `https://<this-site>/clock.html#palette=olive&theme=auto`.
 2. In Notion, paste it and choose **Create embed**.
 3. Set the embed height (see `index.html`; the clock needs about 90 px).
+4. Match `theme` to your Notion theme: `theme=dark` for Notion dark, `theme=light` for Notion light. `theme=auto` follows your computer's setting, so it shows a solid box when Notion and your computer use different themes.
 
 ## Licence
 - Widget code and design: © WellKeptDesk. All rights reserved. Free to embed in WellKeptDesk templates; not licensed for redistribution or resale.

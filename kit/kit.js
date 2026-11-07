@@ -9,7 +9,11 @@
   function text(name, fallback, max){ var v = P.get(name); if(!v) return fallback; return v.replace(/[\u0000-\u001f]/g,'').slice(0, max || 40); }
   function date(name){ var v = P.get(name); if(!v || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return null; var p=v.split('-').map(Number); var d=new Date(p[0],p[1]-1,p[2]); return (d.getMonth()===p[1]-1) ? d : null; }
   var root = document.documentElement;
-  root.setAttribute('data-theme', pick('theme',['light','dark','auto'],'auto'));
+  var theme = pick('theme',['light','dark','auto'],'auto');
+  root.setAttribute('data-theme', theme);
+  // The iframe stays transparent only when its colour scheme matches the embedding page.
+  // Notion's dark theme sets color-scheme: dark on the embed, so a 'normal' widget gets a white canvas.
+  root.style.colorScheme = theme === 'dark' ? 'dark' : theme === 'light' ? 'light' : 'light dark';
   root.setAttribute('data-palette', pick('palette', PALETTES, 'serein'));
   root.setAttribute('data-style', pick('style', STYLES, 'editorial'));
   function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
