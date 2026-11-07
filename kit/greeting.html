@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Greeting</title><style>.w{display:flex;flex-direction:column;align-items:var(--al,flex-start);gap:4px;padding:10px 4px}.g{font:500 26px/1.15 "Cormorant Garamond","Source Serif 4",Georgia,serif;color:var(--ink)}.g em{color:var(--accent)}:root[data-style=minimal] .g,:root[data-style=soft] .g{font:600 22px/1.2 Inter,system-ui,sans-serif}:root[data-style=ledger] .g{font:500 20px/1.2 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}</style></head><body>
+<div class="w" id="w"><div class="g" id="g"></div><div class="s" id="d"></div></div>
+<script>
+(function(){var nm=WK.text('name','',24);var note=WK.text('note','',60);var al=WK.pick('align',['left','center','right'],'left');document.getElementById('w').style.setProperty('--al',{left:'flex-start',center:'center',right:'flex-end'}[al]);
+function part(h){return h>=5&&h<12?'Good morning':h>=12&&h<17?'Good afternoon':'Good evening'}
+function r(n){var g=document.getElementById('g');g.textContent='';g.appendChild(document.createTextNode(part(n.getHours())+(nm?', ':'.')));if(nm){var e=document.createElement('em');e.textContent=nm;g.appendChild(e);g.appendChild(document.createTextNode('.'))}
+document.getElementById('d').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+(note?' · '+note:'')}
+r(new Date());WK.onNewMinute(r);})();
+</script></body></html>

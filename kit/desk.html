@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Desk</title><style>.w{display:flex;flex-direction:column;align-items:var(--al,flex-start);gap:3px;padding:10px 4px}.t{font:600 28px/1 Inter,system-ui,sans-serif;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.01em}.t small{font-size:12px;color:var(--muted);margin-left:4px}.d{font-style:italic;color:var(--accent);font-size:15px}.p{margin-top:6px}</style></head><body>
+<div class="w frame" id="w"><div class="t" id="t" role="timer" aria-live="off"></div><div class="d" id="d"></div><div class="s p" id="p" hidden></div></div>
+<script>
+(function(){var h12=WK.pick('format',['12','24'],'24')==='12';var al=WK.pick('align',['left','center','right'],'left');document.getElementById('w').style.setProperty('--al',{left:'flex-start',center:'center',right:'flex-end'}[al]);
+var pd=WK.num('payday');if(pd!==null&&(pd<1||pd>31||pd%1))pd=null;var lab=WK.text('label','Payday',20);
+function dim(y,m){return new Date(y,m+1,0).getDate()}
+function nextPay(n){var y=n.getFullYear(),m=n.getMonth();var c=new Date(y,m,Math.min(pd,dim(y,m)));if(WK.daysBetween(n,c)<0){m+=1;if(m>11){m=0;y+=1}c=new Date(y,m,Math.min(pd,dim(y,m)))}return c}
+function r(n){var H=n.getHours(),M=('0'+n.getMinutes()).slice(-2),ap='';if(h12){ap=H<12?'AM':'PM';H=H%12||12;}var t=document.getElementById('t');t.textContent=(h12?H:('0'+H).slice(-2))+':'+M;if(ap){var s=document.createElement('small');s.textContent=ap;t.appendChild(s)}
+document.getElementById('d').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+var p=document.getElementById('p');if(pd===null){p.hidden=true;return}var c=nextPay(n),k=WK.daysBetween(n,c);p.hidden=false;p.textContent=lab+(k===0?' today':(' in '+k+' day'+(k===1?'':'s')))+' · '+c.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
+r(new Date());WK.onNewMinute(r);})();
+</script></body></html>

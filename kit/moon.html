@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Moon phase</title><style>.w{display:flex;align-items:center;gap:14px;padding:10px 4px}svg{width:var(--sz,64px);height:var(--sz,64px);flex:none}:root{--moon-dark:var(--fill);--moon-op:.55;--moon-lit:var(--soft)}:root[data-theme=dark]{--moon-dark:var(--track);--moon-op:1;--moon-lit:var(--fill)}@media (prefers-color-scheme:dark){:root[data-theme=auto]{--moon-dark:var(--track);--moon-op:1;--moon-lit:var(--fill)}}.dk{fill:var(--moon-dark);fill-opacity:var(--moon-op);stroke:var(--line);stroke-width:1}.lt{fill:var(--moon-lit)}.tx{display:flex;flex-direction:column;gap:3px;min-width:0}.v{font-size:17px}</style></head><body>
+<div class="w frame"><svg id="m" viewBox="0 0 64 64" role="img"></svg><div class="tx"><span class="k" id="k">Moon</span><span class="v" id="n"></span><span class="s" id="s"></span></div></div>
+<script>
+(function(){var SYN=29.530588853,REF=Date.UTC(2000,0,6,18,14)/86400000;var NS='http://www.w3.org/2000/svg';var m=document.getElementById('m');
+var NAMES=['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
+function age(t){var a=((t/86400000-REF)%SYN+SYN)%SYN;return a}
+function name(a){var i=Math.floor(((a/SYN)*8+0.5))%8;return NAMES[i]}
+function illum(a){return (1-Math.cos(2*Math.PI*a/SYN))/2}
+function r(n){var a=age(n.getTime()),f=illum(a),waxing=a<SYN/2;m.innerHTML='';var R=28;
+var bg=document.createElementNS(NS,'circle');bg.setAttribute('cx',32);bg.setAttribute('cy',32);bg.setAttribute('r',R);bg.setAttribute('class','dk');m.appendChild(bg);
+if(f>0.005){var p=document.createElementNS(NS,'path');var x=R*Math.abs(1-2*f);var sweepOuter=waxing?1:0;var sweepInner=(f<0.5)===waxing?0:1;
+p.setAttribute('d','M32 4 A'+R+' '+R+' 0 0 '+sweepOuter+' 32 60 A'+x.toFixed(2)+' '+R+' 0 0 '+sweepInner+' 32 4 Z');p.setAttribute('class','lt');m.appendChild(p)}
+var nm=name(a),pc=Math.round(f*100);document.getElementById('n').textContent=nm;
+var toFull=((SYN/2-a)%SYN+SYN)%SYN,toNew=SYN-a;var nxt=toFull<toNew?['Full moon',toFull]:['New moon',toNew];var d=Math.round(nxt[1]);
+document.getElementById('s').textContent=pc+'% lit · '+(nm===nxt[0]||d===0?nxt[0]+' today':nxt[0]+' in '+d+' day'+(d===1?'':'s'));
+m.setAttribute('aria-label',nm+', '+pc+' percent illuminated');m.setAttribute('data-age',a.toFixed(2))}
+r(new Date());WK.onNewMinute(function(n){if(n.getMinutes()===0)r(n)});})();
+</script></body></html>

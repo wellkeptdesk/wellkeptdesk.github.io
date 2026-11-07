@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Clock</title><style>.w{display:flex;flex-direction:column;align-items:var(--al,center);gap:2px;padding:8px 4px}.t{font:600 30px/1 Inter,system-ui,sans-serif;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.02em}.t small{font-size:13px;color:var(--muted);margin-left:4px}.d{font-style:italic;color:var(--accent);font-size:15px}</style></head><body>
+<div class="w" id="w" role="timer" aria-live="off"><div class="t" id="t"></div><div class="d" id="d"></div></div>
+<script>
+(function(){var h12=WK.pick('format',['12','24'],'24')==='12';var al=WK.pick('align',['left','center','right'],'center');document.getElementById('w').style.setProperty('--al',{left:'flex-start',center:'center',right:'flex-end'}[al]);
+function r(n){var H=n.getHours(),M=('0'+n.getMinutes()).slice(-2),ap='';if(h12){ap=H<12?'AM':'PM';H=H%12||12;}document.getElementById('t').innerHTML='';var t=document.getElementById('t');t.appendChild(document.createTextNode((h12?H:('0'+H).slice(-2))+':'+M));if(ap){var s=document.createElement('small');s.textContent=ap;t.appendChild(s);}
+document.getElementById('d').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});document.getElementById('w').setAttribute('aria-label','Time '+t.textContent+', '+document.getElementById('d').textContent);}
+r(new Date());WK.onNewMinute(r);})();
+</script></body></html>

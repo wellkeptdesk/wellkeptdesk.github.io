@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Countdown</title><style>.w{padding:10px 4px;text-align:var(--al,left)}.n{font:600 40px/1 Inter,system-ui,sans-serif;color:var(--ink);font-variant-numeric:tabular-nums}.n small{font:italic 400 17px "Source Serif 4",Georgia,serif;color:var(--accent);margin-left:6px}</style></head><body>
+<div class="w frame" id="w"><div class="k" id="k"></div><div class="n" id="n"></div><div class="s" id="s"></div></div>
+<script>
+(function(){var to=WK.date('to');var label=WK.text('label','Countdown',40);document.getElementById('k').textContent=label;document.getElementById('k').title=label;
+function r(now){var n=document.getElementById('n'),s=document.getElementById('s');n.innerHTML='';if(!to){n.textContent='—';s.textContent='Add a date: #to=YYYY-MM-DD';return}
+var d=WK.daysBetween(now,to);var big=document.createElement('span');var sm=document.createElement('small');
+if(d>0){big.textContent=d;sm.textContent=d===1?'day to go':'days to go'}else if(d===0){big.textContent='Today';sm.textContent=''}else{big.textContent=-d;sm.textContent=-d===1?'day ago':'days ago'}
+n.appendChild(big);if(sm.textContent)n.appendChild(sm);s.textContent=to.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'});document.getElementById('w').setAttribute('aria-label',label+': '+n.textContent+', '+s.textContent)}
+var shown=new Date().getDate();r(new Date());WK.onNewMinute(function(x){if(x.getDate()!==shown){shown=x.getDate();r(x)}});})();
+</script></body></html>

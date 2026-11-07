@@ -1,0 +1,86 @@
+{
+ "serein": {
+  "id": "TH02",
+  "name": "Serein · Editorial Ledger",
+  "group": "Nötr / sessiz lüks",
+  "fit": "✓"
+ },
+ "lavender-oat": {
+  "id": "TH05",
+  "name": "Lavender & Oat",
+  "group": "Pastel",
+  "fit": "✓"
+ },
+ "linen-sage": {
+  "id": "TH04",
+  "name": "Linen & Sage",
+  "group": "Botanik",
+  "fit": "✓"
+ },
+ "espresso": {
+  "id": "TH06",
+  "name": "Cloud Dancer & Espresso",
+  "group": "Nötr / sessiz lüks",
+  "fit": "✓"
+ },
+ "sea-glass": {
+  "id": "TH07",
+  "name": "Raindance · Sea Glass",
+  "group": "Serin sakin",
+  "fit": "✓"
+ },
+ "olive": {
+  "id": "TH09",
+  "name": "Olive Archive",
+  "group": "Botanik",
+  "fit": "✓"
+ },
+ "champagne": {
+  "id": "TH22",
+  "name": "Épernay Champagne",
+  "group": "Nötr / sessiz lüks",
+  "fit": "✓"
+ },
+ "porcelain": {
+  "id": "TH23",
+  "name": "Porcelain & Charcoal",
+  "group": "Nötr / sessiz lüks",
+  "fit": "✓"
+ },
+ "terracotta": {
+  "id": "TH08",
+  "name": "Terracotta Studio",
+  "group": "Sıcak toprak",
+  "fit": "dikkat"
+ },
+ "honey": {
+  "id": "TH10",
+  "name": "Honey & Linen",
+  "group": "Sıcak toprak",
+  "fit": "dikkat (sarı ikon)"
+ },
+ "midnight": {
+  "id": "TH12",
+  "name": "Midnight Study (koyu öncelikli)",
+  "group": "Koyu öncelikli",
+  "fit": "dikkat (soğuk)"
+ },
+ "sky-ledger": {
+  "id": "TH31",
+  "name": "Sky Ledger",
+  "group": "Serin sakin",
+  "fit": "dikkat (soğuk)"
+ },
+ "lavender-haze": {
+  "id": "TH41",
+  "name": "Lavender Haze",
+  "group": "Pastel",
+  "fit": "dikkat (TH05 daha bej)"
+ },
+ "ink-brass": {
+  "id": "TH44",
+  "name": "Ink & Brass",
+  "group": "Koyu öncelikli",
+  "fit": "dikkat"
+ }
+}
