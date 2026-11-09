@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Almanac</title><style>
+.w{padding:8px 4px 6px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.days{display:flex;gap:2px;list-style:none;padding:0;margin:0}
+.days li{font:600 10.5px/1 Inter,system-ui,sans-serif;letter-spacing:.08em;color:var(--muted);width:22px;text-align:center;padding:5px 0 6px;border-bottom:1.5px solid transparent}
+.days li.past{opacity:.55}
+.days li[aria-current=date]{color:var(--ink);border-bottom-color:var(--accent)}
+.facts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.facts .k{white-space:nowrap}
+.dot{width:3px;height:3px;border-radius:50%;background:var(--line);flex:none}
+.moon{width:13px;height:13px;flex:none;vertical-align:middle}
+.moon .dk{fill:var(--track);stroke:var(--muted);stroke-width:1.2}.moon .lt{fill:var(--muted)}
+@media (max-width:620px){.opt{display:none!important}}
+@media (max-width:440px){.mn{display:none}.row{gap:12px}}
+.yr{margin-top:8px;height:1px;background:var(--line);position:relative}
+.yr i{position:absolute;left:0;top:-1px;height:3px;background:var(--fill);border-radius:2px}
+</style></head><body>
+<div class="w"><div class="row"><ol class="days" id="days" aria-label="This week"></ol>
+<div class="facts" id="f"></div></div><div class="yr" aria-hidden="true"><i id="yi"></i></div></div>
+<script>
+(function(){var SYN=29.530588853,REF=Date.UTC(2000,0,6,18,14)/86400000,NS='http://www.w3.org/2000/svg';
+var NAMES=['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
+var startSun=WK.pick('start',['mon','sun'],'mon')==='sun';
+function moon(t){var a=((t/86400000-REF)%SYN+SYN)%SYN,f=(1-Math.cos(2*Math.PI*a/SYN))/2;return {a:a,f:f,name:NAMES[Math.floor(((a/SYN)*8+0.5))%8],waxing:a<SYN/2}}
+function moonSvg(m){var s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 64 64');s.setAttribute('class','moon');s.setAttribute('aria-hidden','true');
+var c=document.createElementNS(NS,'circle');c.setAttribute('cx',32);c.setAttribute('cy',32);c.setAttribute('r',28);c.setAttribute('class','dk');s.appendChild(c);
+if(m.f>0.005){var R=28,x=R*Math.abs(1-2*m.f),p=document.createElementNS(NS,'path');p.setAttribute('d','M32 4 A'+R+' '+R+' 0 0 '+(m.waxing?1:0)+' 32 60 A'+x.toFixed(2)+' '+R+' 0 0 '+((m.f<0.5)===m.waxing?0:1)+' 32 4 Z');p.setAttribute('class','lt');s.appendChild(p)}return s}
+function fact(t,o){return WK.el('span','k'+(o?' opt':''),t)}
+function r(n){var y=n.getFullYear(),d0=new Date(y,0,1),len=WK.daysBetween(d0,new Date(y+1,0,1)),doy=WK.daysBetween(d0,n)+1,left=len-doy;
+var ul=document.getElementById('days');ul.innerHTML='';var wd=(n.getDay()+(startSun?0:6))%7;var L=startSun?['S','M','T','W','T','F','S']:['M','T','W','T','F','S','S'];
+for(var i=0;i<7;i++){var li=WK.el('li','',L[i]);if(i<wd)li.className='past';if(i===wd)li.setAttribute('aria-current','date');ul.appendChild(li)}
+var f=document.getElementById('f');f.innerHTML='';var m=moon(n.getTime());
+var parts=[fact('Week '+WK.isoWeek(n).week,1),fact('Day '+doy+' of '+len)];var mw=WK.el('span','k','');mw.style.display='inline-flex';mw.style.alignItems='center';mw.style.gap='6px';mw.appendChild(moonSvg(m));mw.appendChild(WK.el('span','mn',m.name));mw.title=m.name;parts.push(mw);parts.push(fact(left+' days left in '+y,1));
+parts.forEach(function(p,i){if(i){var o=p.classList.contains('opt')||(i===1&&parts[0].classList.contains('opt'));f.appendChild(WK.el('span','dot'+(o?' opt':'')))}f.appendChild(p)});
+document.getElementById('yi').style.width=(100*doy/len).toFixed(1)+'%'}
+r(new Date());WK.onNewMinute(function(n){if(n.getHours()===0&&n.getMinutes()===0)r(n)});})();
+</script></body></html>

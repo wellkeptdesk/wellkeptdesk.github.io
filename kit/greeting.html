@@ -1,9 +1,32 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Greeting</title><style>.w{display:flex;flex-direction:column;align-items:var(--al,flex-start);gap:4px;padding:10px 4px}.g{font:500 26px/1.15 "Cormorant Garamond","Source Serif 4",Georgia,serif;color:var(--ink)}.g em{color:var(--accent)}:root[data-style=minimal] .g,:root[data-style=soft] .g{font:600 22px/1.2 Inter,system-ui,sans-serif}:root[data-style=ledger] .g{font:500 20px/1.2 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}</style></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="base.css"><script src="kit.js"></script><title>Greeting</title><style>
+.w{display:flex;flex-direction:column;align-items:var(--al,flex-start);gap:4px;padding:10px 4px}
+.g{font:500 26px/1.15 "Cormorant Garamond","Source Serif 4",Georgia,serif;color:var(--ink)}.g em{color:var(--accent)}
+:root[data-style=minimal] .g,:root[data-style=soft] .g{font:600 22px/1.2 Inter,system-ui,sans-serif}
+:root[data-style=ledger] .g{font:500 20px/1.2 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+/* layout=masthead: kicker (greeting + date) / hairline / italic standfirst. One headline on the page stays the Notion title. */
+.mh{display:none;padding:8px 4px 6px;text-align:var(--ta,left)}
+:root[data-layout=masthead] .w{display:none}
+:root[data-layout=masthead] .mh{display:block}
+.mh .k{color:var(--muted);white-space:normal}
+:root[data-palette=fern] .mh .k,:root[data-palette=oxblood] .mh .k{color:var(--accent)}
+.mh hr{border:0;border-top:1px solid var(--line);margin:9px 0 10px}
+.mh .st{font:italic 400 22px/1.3 "Source Serif 4",Georgia,serif;color:var(--ink);text-wrap:balance}
+.mh .st.h{font:500 30px/1.15 "Cormorant Garamond","Source Serif 4",Georgia,serif;font-style:normal}
+:root[data-style=minimal] .mh .st,:root[data-style=soft] .mh .st{font:500 19px/1.3 Inter,system-ui,sans-serif}
+:root[data-style=ledger] .mh .st{font:400 17px/1.35 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+</style></head><body>
 <div class="w" id="w"><div class="g" id="g"></div><div class="s" id="d"></div></div>
+<div class="mh" id="mh"><div class="k" id="mk"></div><hr><div class="st" id="ms"></div></div>
 <script>
-(function(){var nm=WK.text('name','',24);var note=WK.text('note','',60);var al=WK.pick('align',['left','center','right'],'left');document.getElementById('w').style.setProperty('--al',{left:'flex-start',center:'center',right:'flex-end'}[al]);
+(function(){var nm=WK.text('name','',24);var note=WK.text('note','',60);var al=WK.pick('align',['left','center','right'],'left');
+var layout=WK.pick('layout',['stack','masthead'],'stack');document.documentElement.setAttribute('data-layout',layout);
+document.getElementById('w').style.setProperty('--al',{left:'flex-start',center:'center',right:'flex-end'}[al]);
+document.getElementById('mh').style.setProperty('--ta',al);
 function part(h){return h>=5&&h<12?'Good morning':h>=12&&h<17?'Good afternoon':'Good evening'}
-function r(n){var g=document.getElementById('g');g.textContent='';g.appendChild(document.createTextNode(part(n.getHours())+(nm?', ':'.')));if(nm){var e=document.createElement('em');e.textContent=nm;g.appendChild(e);g.appendChild(document.createTextNode('.'))}
-document.getElementById('d').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+(note?' · '+note:'')}
+function r(n){var day=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+var g=document.getElementById('g');g.textContent='';g.appendChild(document.createTextNode(part(n.getHours())+(nm?', ':'.')));if(nm){var e=document.createElement('em');e.textContent=nm;g.appendChild(e);g.appendChild(document.createTextNode('.'))}
+document.getElementById('d').textContent=day+(note?' · '+note:'');
+document.getElementById('mk').textContent=part(n.getHours())+(nm?', '+nm:'')+' · '+day;
+var ms=document.getElementById('ms');ms.textContent=note||(part(n.getHours())+'.');ms.className='st'+(note?'':' h')}
 r(new Date());WK.onNewMinute(r);})();
 </script></body></html>

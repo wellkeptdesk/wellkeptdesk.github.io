@@ -18,13 +18,13 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 <h1>WellKeptDesk widgets</h1>
 <p class="lead">Small, quiet widgets for Notion pages. Copy a link, paste it into Notion, choose “Create embed”, then set the embed height shown under each card. Settings live after the <b>#</b> in the link, so nothing is sent to a server.</p>
 <div class="grid" id="g"></div>
-<footer>Options: <b>palette</b> (serein, lavender-oat, linen-sage, espresso, sea-glass, olive, champagne, porcelain, terracotta, honey, midnight, sky-ledger, lavender-haze, ink-brass) · <b>theme</b> (light, dark, auto) · <b>style</b> (editorial, soft, minimal, ledger). Fonts are licensed under the SIL Open Font License; licence texts are in /fonts.</footer>
+<footer>Options: <b>palette</b> (serein, lavender-oat, linen-sage, espresso, sea-glass, olive, champagne, porcelain, terracotta, honey, midnight, sky-ledger, lavender-haze, ink-brass, ink, fern, oxblood) · <b>theme</b> (light, dark, auto) · <b>style</b> (editorial, soft, minimal, ledger). Fonts are licensed under the SIL Open Font License; licence texts are in /fonts.</footer>
 </main>
 <script>
-var W=[["clock","Clock","",90],["desk","Desk: clock, date, payday","payday=25",130],["greeting","Greeting","name=Alex",100],["calendar","Month calendar","",240],["week","Week strip","",120],["countdown","Countdown","to=2026-12-25&label=Holidays",120],["progress","Year, month, week, day","",130],["ring","Progress rings","show=year,month",150],["analog","Analog clock","",190],["moon","Moon phase","",110],["quote","Quote of the day","",140],["pomodoro","Focus timer","",120]];
+var W=[["clock","Clock","",90],["desk","Desk: clock, date, payday","payday=25",130],["greeting","Greeting","name=Alex",100],["calendar","Month calendar","",240],["week","Week strip","",120],["countdown","Countdown","to=2026-12-25&label=Holidays",120],["progress","Year, month, week, day","",130],["ring","Progress rings","show=year,month",150],["analog","Analog clock","",190],["moon","Moon phase","",110],["almanac","Almanac","palette=ink",70],["quote","Quote of the day","",140],["pomodoro","Focus timer","",120],["greeting","Greeting · masthead","palette=ink&layout=masthead&note=Read%20slowly.%20Keep%20what%20stays.",100],["clock","Clock · corner","palette=ink&layout=corner&align=right",90],["pomodoro","Reading session","palette=ink&layout=session&label=Session",110],["quote","Pull quote · shelf","palette=ink&set=shelf&size=large",150]];
 var base=location.href.replace(/[#?].*$/,'').replace(/index\.html$/,'').replace(/\/?$/,'/');
 var g=document.getElementById('g');
-W.forEach(function(w){var hash='palette=olive&theme=auto'+(w[2]?'&'+w[2]:'');var url=base+w[0]+'.html#'+hash;
+W.forEach(function(w){var hash=(/palette=/.test(w[2])?'':'palette=olive&')+'theme=auto'+(w[2]?'&'+w[2]:'');var url=base+w[0]+'.html#'+hash;
 var c=document.createElement('div');c.className='card';var h=document.createElement('h2');h.textContent=w[1];
 var f=document.createElement('iframe');f.src=w[0]+'.html#'+hash;f.height=w[3];f.title=w[1];
 var k=document.createElement('code');k.textContent=url+'  ·  height '+w[3]+' px';

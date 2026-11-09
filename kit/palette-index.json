@@ -82,5 +82,23 @@
   "name": "Ink & Brass",
   "group": "Koyu öncelikli",
   "fit": "dikkat"
+ },
+ "ink": {
+  "id": "TH22",
+  "name": "Ink & Paper",
+  "group": "Editoryal nötr",
+  "fit": "✓"
+ },
+ "fern": {
+  "id": "TH23",
+  "name": "Library Fern (Notion yeşili)",
+  "group": "Editoryal nötr",
+  "fit": "✓"
+ },
+ "oxblood": {
+  "id": "TH24",
+  "name": "Oxblood",
+  "group": "Editoryal nötr",
+  "fit": "✓"
  }
 }
