@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="robots" content="noindex"><title>Review · WellKeptDesk</title><style>:root{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE;--chip:#2F3332;--chipfg:#F4F2EE;--line:#CFCAC2}
+@media (prefers-color-scheme: dark){:root{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936;--chip:#E9E6E0;--chipfg:#1E1E1E;--line:#4A4845}}
+html[data-theme="light"]{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE;--chip:#2F3332;--chipfg:#F4F2EE;--line:#CFCAC2}
+html[data-theme="dark"]{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936;--chip:#E9E6E0;--chipfg:#1E1E1E;--line:#4A4845}
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+body{font-family:ui-sans-serif,-apple-system,"Segoe UI Variable Display","Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;color:var(--fg)}
+.wrap{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 2px}
+.k{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.big{font-size:40px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.rule{height:1px;background:var(--rule);max-width:170px}
+.row{display:flex;flex-wrap:wrap;gap:5px}
+button{font:inherit;font-size:12px;font-weight:500;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:12px;padding:3px 9px;cursor:pointer;line-height:1.3}
+button.on{background:var(--chip);color:var(--chipfg);border-color:var(--chip)}
+button:focus-visible{outline:2px solid var(--muted);outline-offset:2px}
+.sm{font-size:12.5px;color:var(--muted);line-height:1.35}
+
+.s{font-size:15px;line-height:1.36;font-weight:450;max-width:220px;min-height:2.7em;text-wrap:balance}
+.dots{display:flex;gap:5px}.dots i{width:14px;height:3px;border-radius:2px;background:var(--line);display:block}.dots i.on{background:var(--fg)}
+</style></head><body><div class="wrap"><div class="k" id="k">Weekly review</div><div class="dots" id="d"></div><div class="s" id="s">&nbsp;</div><div class="sm" id="m">&nbsp;</div><div class="row"><button id="b">Back</button><button id="n" class="on">Next</button></div></div>
+<script>(function(){var q=new URLSearchParams(location.search);var th=q.get('theme');if(th==='light'||th==='dark')document.documentElement.setAttribute('data-theme',th);
+var M=q.get('mode')==='monthly';
+var S=M?["Read this month's numbers once. No judging yet.","Rate Body, Mind, Money, Work, People, Fun from 1 to 10.","Write the win of the month.","Write what drained you.","Name one thing to stop.","Pick one focus for next month. Close the page."]:["Skim the week's daily log. What stands out?","Write one win.","Write one lesson.","Clear Next up: do it, move it or drop it.","Pick three priorities for the week ahead.","Rate the week from 1 to 10. Done."];
+var mins=M?20:10;document.getElementById('k').textContent=M?'Monthly check-in':'Weekly review';
+var i=0,t0=0,D=document.getElementById('d');S.forEach(function(){D.appendChild(document.createElement('i'))});
+function paint(){document.getElementById('s').textContent=S[i];[].forEach.call(D.children,function(e,j){e.className=j<=i?'on':''});
+var el=t0?Math.floor((Date.now()-t0)/60000):0;document.getElementById('m').textContent='Step '+(i+1)+' of '+S.length+' · '+(t0?el+' of '+mins+' min':'about '+mins+' min');
+document.getElementById('n').textContent=i===S.length-1?'Start over':'Next';document.getElementById('b').disabled=i===0;document.getElementById('b').style.opacity=i===0?.4:1}
+document.getElementById('n').onclick=function(){if(!t0)t0=Date.now();if(i===S.length-1){i=0;t0=0}else i++;paint()};
+document.getElementById('b').onclick=function(){if(i>0)i--;paint()};setInterval(paint,30000);paint()})();</script></body></html>
