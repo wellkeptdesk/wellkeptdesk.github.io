@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="robots" content="noindex"><title>Timer · WellKeptDesk</title><style>:root{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE;--chip:#2F3332;--chipfg:#F4F2EE;--line:#CFCAC2}
+@media (prefers-color-scheme: dark){:root{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936;--chip:#E9E6E0;--chipfg:#1E1E1E;--line:#4A4845}}
+html[data-theme="light"]{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE;--chip:#2F3332;--chipfg:#F4F2EE;--line:#CFCAC2}
+html[data-theme="dark"]{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936;--chip:#E9E6E0;--chipfg:#1E1E1E;--line:#4A4845}
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+body{font-family:ui-sans-serif,-apple-system,"Segoe UI Variable Display","Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;color:var(--fg)}
+.wrap{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 2px}
+.k{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.big{font-size:40px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.rule{height:1px;background:var(--rule);max-width:170px}
+.row{display:flex;flex-wrap:wrap;gap:5px}
+button{font:inherit;font-size:12px;font-weight:500;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:12px;padding:3px 9px;cursor:pointer;line-height:1.3}
+button.on{background:var(--chip);color:var(--chipfg);border-color:var(--chip)}
+button:focus-visible{outline:2px solid var(--muted);outline-offset:2px}
+.sm{font-size:12.5px;color:var(--muted);line-height:1.35}
+
+.done .big{animation:pulse 1s ease-in-out 3}@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){.done .big{animation:none}}
+</style></head><body><div class="wrap" id="w"><div class="k" id="lab">Timer</div><div class="big" id="t" aria-live="polite">0:00</div><div class="row" id="pre"></div><div class="row"><button id="go">Start</button><button id="rs">Reset</button><button id="plus" hidden>+1 min</button></div></div>
+<script>(function(){var q=new URLSearchParams(location.search);var th=q.get('theme');if(th==='light'||th==='dark')document.documentElement.setAttribute('data-theme',th);
+var label=(q.get('label')||'Rest').slice(0,24);document.getElementById('lab').textContent=label;
+var pres=(q.get('presets')||'60,90,120,180').split(',').map(function(x){return Math.max(5,Math.min(7200,parseInt(x,10)||0))}).filter(Boolean).slice(0,5);
+var plusS=parseInt(q.get('plus')||'0',10);if(plusS>0){var pb=document.getElementById('plus');pb.hidden=false;pb.textContent='+'+(plusS>=60?Math.round(plusS/60)+' min':plusS+'s')}
+var sel=pres[Math.min(1,pres.length-1)],left=sel*1000,end=0,run=false,iv=null;var T=document.getElementById('t'),W=document.getElementById('w'),G=document.getElementById('go');
+function fmt(ms){var s=Math.ceil(ms/1000),m=Math.floor(s/60);s=s%60;return m+':'+(s<10?'0':'')+s}
+function nm(s){return s<120&&s%60?s+'s':(s%60?Math.floor(s/60)+'m'+s%60:s/60+'m')}
+var P=document.getElementById('pre');pres.forEach(function(s){var b=document.createElement('button');b.textContent=nm(s);b.onclick=function(){sel=s;left=s*1000;start();paint()};P.appendChild(b)});
+function paint(){T.textContent=fmt(left);G.textContent=run?'Pause':'Start';[].forEach.call(P.children,function(b,i){b.className=pres[i]===sel?'on':''})}
+function beep(){try{var a=new (window.AudioContext||window.webkitAudioContext)();[0,.35,.7].forEach(function(t){var o=a.createOscillator(),g=a.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.15,a.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.25);o.connect(g);g.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.3)})}catch(e){}}
+function tick(){left=Math.max(0,end-Date.now());if(left<=0){run=false;clearInterval(iv);W.classList.add('done');T.textContent='Done';G.textContent='Start';beep();left=sel*1000;return}paint()}
+function start(){W.classList.remove('done');end=Date.now()+left;run=true;clearInterval(iv);iv=setInterval(tick,250);paint()}
+function pause(){run=false;clearInterval(iv);left=Math.max(0,end-Date.now());paint()}
+G.onclick=function(){run?pause():start()};document.getElementById('rs').onclick=function(){pause();left=sel*1000;W.classList.remove('done');paint()};
+document.getElementById('plus').onclick=function(){if(run)end+=plusS*1000;else left+=plusS*1000;paint()};
+paint()})();</script></body></html>
