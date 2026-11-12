@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="robots" content="noindex"><title>Clock · WellKeptDesk</title><style>
+:root{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE}
+@media (prefers-color-scheme: dark){:root{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936}}
+html[data-theme="light"]{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE}html[data-theme="dark"]{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936}
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+body{font-family:ui-sans-serif,-apple-system,"Segoe UI Variable Display","Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;color:var(--fg)}
+.wrap{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:0 2px}
+.t{font-size:40px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.t small{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--muted);margin-left:5px}
+.rule{height:1px;background:var(--rule);width:100%;max-width:150px}
+.d{font-size:12.5px;font-weight:500;color:var(--muted);white-space:nowrap}
+</style></head><body><div class="wrap"><div class="t" id="t">&nbsp;</div><div class="rule"></div><div class="d" id="d">&nbsp;</div></div>
+<script>(function(){var q=new URLSearchParams(location.search);var th=q.get('theme');if(th==='light'||th==='dark')document.documentElement.setAttribute('data-theme',th);
+var L=navigator.language||'en-US',tz=q.get('tz')||undefined,cy='';try{cy=new Intl.DateTimeFormat(L,{hour:'numeric'}).resolvedOptions().hourCycle||''}catch(e){}
+var h24=q.has('24')?true:q.has('12')?false:(cy==='h23'||cy==='h24');var lang=/^en/i.test(L)?L:(h24?'en-GB':'en-US');
+var f=new Intl.DateTimeFormat(lang,{hour:'numeric',minute:'2-digit',hourCycle:h24?'h23':'h12',timeZone:tz}),df=new Intl.DateTimeFormat(lang,{weekday:'long',month:'long',day:'numeric',timeZone:tz});
+function tick(){var n=new Date(),h='',m='',ap='';f.formatToParts(n).forEach(function(p){if(p.type==='hour')h=p.value;else if(p.type==='minute')m=p.value;else if(p.type==='dayPeriod')ap=p.value.replace(/\./g,'').toUpperCase()});
+document.getElementById('t').innerHTML=h+':'+m+(ap?'<small>'+ap+'</small>':'');document.getElementById('d').textContent=df.format(n)}
+tick();setInterval(tick,1000);document.addEventListener('visibilitychange',function(){if(!document.hidden)tick()})})();</script></body></html>
