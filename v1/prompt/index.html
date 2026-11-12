@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="robots" content="noindex"><title>Prompt · WellKeptDesk</title><style>:root{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE;--chip:#2F3332;--chipfg:#F4F2EE;--line:#CFCAC2}
+@media (prefers-color-scheme: dark){:root{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936;--chip:#E9E6E0;--chipfg:#1E1E1E;--line:#4A4845}}
+html[data-theme="light"]{--fg:#2F3332;--muted:#8C8882;--rule:#D9D5CE;--chip:#2F3332;--chipfg:#F4F2EE;--line:#CFCAC2}
+html[data-theme="dark"]{--fg:#ECEBE6;--muted:#9B978F;--rule:#3A3936;--chip:#E9E6E0;--chipfg:#1E1E1E;--line:#4A4845}
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+body{font-family:ui-sans-serif,-apple-system,"Segoe UI Variable Display","Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;color:var(--fg)}
+.wrap{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 2px}
+.k{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.big{font-size:40px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.rule{height:1px;background:var(--rule);max-width:170px}
+.row{display:flex;flex-wrap:wrap;gap:5px}
+button{font:inherit;font-size:12px;font-weight:500;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:12px;padding:3px 9px;cursor:pointer;line-height:1.3}
+button.on{background:var(--chip);color:var(--chipfg);border-color:var(--chip)}
+button:focus-visible{outline:2px solid var(--muted);outline-offset:2px}
+.sm{font-size:12.5px;color:var(--muted);line-height:1.35}
+
+.p{font-size:15px;line-height:1.38;font-weight:450;max-width:220px;text-wrap:balance}
+</style></head><body><div class="wrap"><div class="k">Prompt for today</div><div class="p" id="p">&nbsp;</div><div class="row"><button id="n" aria-label="Show another prompt">Another</button></div></div>
+<script>(function(){var q=new URLSearchParams(location.search);var th=q.get('theme');if(th==='light'||th==='dark')document.documentElement.setAttribute('data-theme',th);
+var P=["What did you put off today, and why?","What gave you energy today? What took it?","Which small thing went better than expected?","What are you avoiding thinking about?","Who made your day easier, and did you tell them?","What would make tomorrow ten percent better?","What did you learn the hard way this week?","Where did your time go today?","What are you holding on to that you could let go?","What did you do today only because it was expected?","What would you tell yourself from a year ago?","What is one thing you are quietly proud of?","What felt heavy today? Write it down and leave it here.","Which habit is carrying you right now?","What did you notice today that you usually miss?","What decision have you been circling for too long?","When did you feel most like yourself today?","What is a worry you can act on, and one you can't?","What would rest look like this week?","Which conversation do you keep replaying?","What are three things in front of you right now?","What did you say yes to that you meant as no?","What is enough, today?","What would you do with one free hour tomorrow?","What did your body tell you today?","Which promise to yourself did you keep?","What is the next small step on something big?","What made you laugh recently?","What are you looking forward to, and why?","What would you change about how today started?","Where were you hard on yourself today?","What is something you want to remember about this month?","What did you buy, read or watch that you'd recommend?","Which task felt easier once you started?","What does a good week look like for you right now?","What did you learn from someone younger than you?","What would you stop doing if no one noticed?","What are you grateful for that cost nothing?","Where do you need help, and who could you ask?","What did today ask of you?"];
+function key(d){var s=d.getFullYear()*372+d.getMonth()*31+d.getDate();return s}
+var i=key(new Date())%P.length,E=document.getElementById('p');function show(){E.textContent=P[i]}show();
+document.getElementById('n').onclick=function(){i=(i+1)%P.length;show()}})();</script></body></html>
