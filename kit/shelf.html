@@ -5,13 +5,24 @@
 :root[data-t=light]{--bg:#F3F3F2;--paper:#FBFBFA;--ink:#2B2D31;--mute:#8A8C8F;--line:#E2E2E0;--acc:#6B2D3C;--chip:#E2E2E0;--sh:rgba(43,45,49,.18)}
 :root[data-t=dark]{--bg:#191919;--paper:#26272A;--ink:#E6E6E4;--mute:#8A8C8F;--line:#35373B;--acc:#B9808E;--chip:#35373B;--sh:rgba(0,0,0,.5)}
 *{box-sizing:border-box;margin:0}html,body{height:100%}
-body{padding-top:20px!important;background:var(--bg);color:var(--ink);font:13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;overflow:hidden}
-.stage{position:relative;width:min(100%,230px);aspect-ratio:3/4;perspective:1100px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.leaf{position:absolute;inset:0;transform-origin:50% 0;transition:transform .8s cubic-bezier(.5,.05,.2,1);transform-style:preserve-3d;will-change:transform}
-.leaf.up{transform:rotateX(-178deg);visibility:hidden;transition:transform .8s cubic-bezier(.5,.05,.2,1),visibility 0s .8s}
+body{background:var(--bg);color:var(--ink);font:13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px;overflow:hidden}
+.stage{position:relative;perspective-origin:0% 50%;width:min(100%,240px,calc((100vh - 62px)*.75));aspect-ratio:3/4;perspective:1500px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.leaf{position:absolute;inset:0;transform-origin:0 50%;transform-style:preserve-3d;will-change:transform;opacity:1;visibility:visible;
+transition:transform .85s cubic-bezier(.25,.1,.25,1),opacity .2s ease 0s,visibility 0s}
+.leaf.up{transform:rotateY(-104deg);opacity:0;visibility:hidden;
+transition:transform .85s cubic-bezier(.33,.12,.25,1),opacity .28s ease .56s,visibility 0s .85s}
+.face:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;border-radius:inherit}
+.front:after{background:linear-gradient(90deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.28))}
+.back:after{background:linear-gradient(270deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.30))}
+.leaf.turn .front:after{animation:shadeF .85s ease-out}
+.leaf.turn .back:after{animation:shadeB .95s cubic-bezier(.645,.045,.355,1)}
+@keyframes shadeF{0%{opacity:0}70%{opacity:1}100%{opacity:1}}
+@keyframes shadeB{0%{opacity:1}55%{opacity:.8}100%{opacity:0}}
+.leaf.under .front:after{background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 70%);animation:cast .85s ease-out}
+@keyframes cast{0%{opacity:.2}30%{opacity:1}100%{opacity:0}}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:4px;overflow:hidden}
 .front{outline:1px solid var(--line)}.front img{width:100%;height:100%;display:block}
-.back{transform:rotateX(180deg);background:var(--paper);box-shadow:0 6px 18px var(--sh)}
+.back{transform:rotateY(180deg);background:var(--paper);box-shadow:0 6px 18px var(--sh)}
 .back:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(var(--paper) 0 21px,var(--line) 21px 22px)}
 .page{background:var(--paper);box-shadow:0 8px 22px var(--sh);padding:16px 16px 14px 18px;display:flex;flex-direction:column}
 .page:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(90deg,rgba(0,0,0,.10),transparent)}
@@ -61,9 +72,15 @@ const leaves=items.map((it,j)=>{
  const bk=document.createElement("div");bk.className="face back";
  L.append(f,bk);st.append(L);return L});
 const start=Math.max(0,B.findIndex(b=>b.k===H.book))*2;
-let cur=0; // number of leaves flipped
-function go(n){n=Math.max(0,Math.min(items.length-1,n));cur=n;
- leaves.forEach((L,j)=>{L.classList.toggle("up",j<cur);L.classList.toggle("cur",j===cur);L.style.pointerEvents=(j===cur)?"auto":"none";L.style.zIndex=(j<cur)?j:100-j});
+let cur=-1; // number of leaves flipped
+function go(n){n=Math.max(0,Math.min(items.length-1,n));if(n===cur&&leaves[n].classList.contains("cur"))return;
+ const init=cur<0,a=Math.min(cur,n),b=Math.max(cur,n),fw=n>cur;
+ leaves.forEach((L,j)=>{L.classList.remove("turn","under");L.style.transitionDelay="";void L.offsetWidth;
+  if(!init&&j>=a&&j<b){L.classList.add("turn");const k=fw?j-a:b-1-j;if(k)L.style.transitionDelay=(k*60)+"ms"}});
+ if(!init&&leaves[b])leaves[b].classList.add("under");
+ clearTimeout(go.t);go.t=setTimeout(()=>leaves.forEach(L=>L.classList.remove("turn","under")),1400);
+ cur=n;
+ leaves.forEach((L,j)=>{L.classList.toggle("up",j<cur);L.classList.toggle("cur",j===cur);L.style.pointerEvents=(j===cur)?"auto":"none";L.style.zIndex=L.classList.contains("turn")?200-j:((j<cur)?j:100-j)});
  [...dots.children].forEach((d,i)=>d.classList.toggle("on",i===Math.floor(cur/2)))}
 B.forEach((b,i)=>{const d=document.createElement("button");d.title=b.t;d.onclick=()=>go(i*2);dots.append(d)});
 st.addEventListener("click",e=>{if(e.target.closest("a"))return;const r=st.getBoundingClientRect();(e.clientY-r.top<r.height*.18&&cur>0)?go(cur-1):go(cur+1)});
