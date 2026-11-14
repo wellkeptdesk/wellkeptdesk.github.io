@@ -6,5 +6,5 @@ var now=new Date(),mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-(
 var D=['M','T','W','T','F','S','S'],ti=(now.getDay()+6)%7,g=document.getElementById('g');var seeded=false;if(WK.P.get('demo')==='1'&&!data.u&&!Object.keys(data.d).length){for(var r0=0;r0<items.length;r0++)for(var i0=0;i0<ti;i0++){if((r0*2+i0)%3!==0)data.d[r0+'-'+i0]=true}seeded=Object.keys(data.d).length>0}
 function paint(){g.textContent='';g.appendChild(WK.el('div'));D.forEach(function(x,i){g.appendChild(WK.el('div','dl'+(i===ti?' t':''),x))});var tot=0,all=items.length*7;
 items.forEach(function(it,r){g.appendChild(WK.el('div','h',it));for(var i=0;i<7;i++){var on=!!(data.d[r+'-'+i]);if(on)tot++;var b=WK.el('button','c'+(i===ti?' t':''));b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',it+', '+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][i]);(function(r,i){b.onclick=function(){if(seeded){data.d={};seeded=false}data.u=1;data.d[r+'-'+i]=!data.d[r+'-'+i];st.set(data);paint()}})(r,i);g.appendChild(b)}});
-document.getElementById('n').textContent=tot+' of '+all+' ticks this week'+(seeded?' · sample, tap to start your own':'');}
+document.getElementById('n').textContent=seeded?(tot+' of '+(items.length*ti)+' ticks so far · sample, tap to start your own'):(tot+' of '+all+' ticks this week');}
 paint();})();</script></body></html>
