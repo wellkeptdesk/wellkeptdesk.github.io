@@ -55,6 +55,6 @@
 @media (prefers-color-scheme:dark){:root[data-palette=oxblood][data-theme=auto]{--ink:#ECEAE5;--muted:#9E9B95;--accent:#D08A7D;--fill:#C0705F;--track:#2A2221;--line:#3A3936;--soft:#232322}}
 
 /* Slow Margin (2026-11-14): grays + burgundy accent + brass second accent. */
-:root[data-palette=slowmargin]{--ink:#2B2D31;--muted:#6C6E72;--accent:#6B2D3C;--fill:#4A4D52;--brass:#8F7A44;--track:#EAEAE8;--line:#D9D9D8;--soft:#F3F3F2}
-:root[data-palette=slowmargin][data-theme=dark]{--ink:#E8E8E6;--muted:#A0A2A5;--accent:#C47F8C;--fill:#8C8F94;--brass:#C8B27A;--track:#2A2B2E;--line:#424448;--soft:#26272A}
-@media (prefers-color-scheme:dark){:root[data-palette=slowmargin][data-theme=auto]{--ink:#E8E8E6;--muted:#A0A2A5;--accent:#C47F8C;--fill:#8C8F94;--brass:#C8B27A;--track:#2A2B2E;--line:#424448;--soft:#26272A}}
+:root[data-palette=slowmargin]{--ink:#2B2D31;--muted:#6C6E72;--accent:#6B2D3C;--fill:#4A4D52;--brass:#4A4D52;--track:#EAEAE8;--line:#D9D9D8;--soft:#F3F3F2}
+:root[data-palette=slowmargin][data-theme=dark]{--ink:#E8E8E6;--muted:#A0A2A5;--accent:#B69CA2;--fill:#8C8F94;--brass:#D0D0CE;--track:#2A2B2E;--line:#424448;--soft:#26272A}
+@media (prefers-color-scheme:dark){:root[data-palette=slowmargin][data-theme=auto]{--ink:#E8E8E6;--muted:#A0A2A5;--accent:#B69CA2;--fill:#8C8F94;--brass:#D0D0CE;--track:#2A2B2E;--line:#424448;--soft:#26272A}}
