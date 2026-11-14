@@ -2,7 +2,7 @@
 (function(){
   var raw = location.hash.length > 1 ? location.hash.slice(1) : location.search.slice(1);
   var P = new URLSearchParams(raw);
-  var PALETTES = ["serein", "lavender-oat", "linen-sage", "espresso", "sea-glass", "olive", "champagne", "porcelain", "terracotta", "honey", "midnight", "sky-ledger", "lavender-haze", "ink-brass", "ink", "fern", "oxblood"];
+  var PALETTES = ["serein", "lavender-oat", "linen-sage", "espresso", "sea-glass", "olive", "champagne", "porcelain", "terracotta", "honey", "midnight", "sky-ledger", "lavender-haze", "ink-brass", "ink", "fern", "oxblood", "slowmargin"];
   var STYLES = ['editorial','soft','minimal','ledger'];
   function pick(name, allowed, fallback){ var v = P.get(name); return allowed.indexOf(v) > -1 ? v : fallback; }
   function num(name){ var v = parseFloat(P.get(name)); return isFinite(v) ? v : null; }
