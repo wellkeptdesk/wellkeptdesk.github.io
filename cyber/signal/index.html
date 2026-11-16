@@ -78,10 +78,10 @@ svg .pt{fill:var(--acid);stroke:var(--led-edge);stroke-width:1.5}
     CH.forEach(function(c){var t=(all[today]||{})[c[0]]||0;if(t)n++;
       document.querySelectorAll('#l-'+c[0]+' + .segs .s').forEach(function(b,i){b.setAttribute('aria-pressed',String(i<t))});
       var v=document.getElementById('v-'+c[0]);v.textContent=t?t+'/5':'--';v.className='val'+(t?'':' e');
-      var svg=document.getElementById('t-'+c[0]),W=Math.max(60,svg.clientWidth||130),sx=(W-6)/13,pts=[],last=null,h='<line class="base" x1="0" y1="29" x2="'+W+'" y2="29"/>';svg.setAttribute('viewBox','0 0 '+W+' 30');
-      days.forEach(function(k,i){var x=3+i*sx,y=all[k]&&all[k][c[0]];if(y){pts.push(x+','+(29-(y-1)*6.5));last=[x,29-(y-1)*6.5]}});
-      if(!pts.length)h+='<text class="empty" x="0" y="20">NO SIGNAL YET</text>';if(pts.length>1)h+='<polyline class="tr" points="'+pts.join(' ')+'"/>';
-      if(last&&days[13]===today&&t)h+='<circle class="pt" cx="'+last[0]+'" cy="'+last[1]+'" r="3"/>';
+      var svg=document.getElementById('t-'+c[0]),W=Math.max(60,svg.clientWidth||130),sx=(W-12)/13,pts=[],last=null,h='<line class="base" x1="0" y1="29" x2="'+W+'" y2="29"/>';svg.setAttribute('viewBox','0 0 '+W+' 30');
+      days.forEach(function(k,i){var x=5+i*sx,y=all[k]&&all[k][c[0]];if(y){pts.push(x+','+(29-(y-1)*6.5));last=[x,29-(y-1)*6.5]}});
+      if(!pts.length)h+='<text class="empty" x="0" y="20">NO SIGNAL YET</text>';if(pts.length===1)h+='<text class="empty" x="0" y="20">TRACE STARTS TOMORROW</text>';if(pts.length>1)h+='<polyline class="tr" points="'+pts.join(' ')+'"/>';
+      if(last&&days[13]===today&&t)h+='<circle class="pt" cx="'+last[0]+'" cy="'+last[1]+'" r="4"/>';
       svg.innerHTML=h});
     document.getElementById('led').className='led'+(n===3?' on':'');status(n)}
   function status(n){document.getElementById('st').textContent=!ok?'NOT SAVED: STORAGE BLOCKED':(n===undefined?'':n+'/3 LOGGED'+(n===3?' · SYS OK':''))}
