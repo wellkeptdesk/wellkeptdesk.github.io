@@ -16,7 +16,7 @@
 :root[data-theme="light"]{--page:#FFFFFF}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:var(--page)}
-body{font-family:Corm,Georgia,serif;color:var(--parch);-webkit-font-smoothing:antialiased;font-variant-numeric:lining-nums tabular-nums;display:flex;justify-content:center;padding:6px 4px}
+body{padding-top:14px;container-type:size;font-family:Corm,Georgia,serif;color:var(--parch);-webkit-font-smoothing:antialiased;font-variant-numeric:lining-nums tabular-nums;display:flex;justify-content:center;padding:6px 4px}
 .arch{width:100%;max-width:420px;min-height:100%;background:var(--night);border:1.5px solid var(--gold);border-radius:210px 210px 6px 6px;padding:34px 26px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
 .moon{width:92px;height:92px}
 .ph{font-family:Uncial,serif;font-size:15px;color:var(--gold2);letter-spacing:.02em}
@@ -35,19 +35,34 @@ body{font-family:Corm,Georgia,serif;color:var(--parch);-webkit-font-smoothing:an
 .c svg{width:12px;height:16px}
 .c.today span{color:var(--gold2)}
 .foot{font-size:13px;font-style:italic;color:var(--mute)}
+.arch{position:relative}
+.arch::before{content:"\2726";position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:20px;line-height:1;color:var(--gold2);background:var(--page);padding:0 8px}
+.col{display:flex;flex-direction:column;align-items:center;gap:10px}
+/* Notion embeds are wide and about 360 px tall: switch to a low arch with three bays */
+@container (min-width:600px) and (max-height:480px){
+ .arch{max-width:900px;border-radius:50% 50% 6px 6px/90px 90px 6px 6px;padding:40px 30px 16px;display:grid;grid-template-columns:1fr 1.2fr 1fr;align-items:center;gap:8px}
+ .rule{display:none}.moon{width:84px;height:84px}.t{font-size:40px}
+ .bay{border-left:1px solid var(--line)}
+}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 </style>
 </head>
 <body>
 <div class="arch">
+  <div class="col">
   <svg class="moon" id="moon" viewBox="-50 -50 100 100" role="img" aria-labelledby="ph"></svg>
   <div><div class="ph" id="ph">—</div><div class="sub" id="lit">—</div></div>
+  </div>
+  <div class="col bay">
   <div class="t" id="t" aria-live="off">0:00:00</div>
   <button class="btn" id="go" aria-pressed="false">Light the lamp</button>
   <div class="pg"><button class="st" id="mn" aria-label="One page fewer">−</button><span>Pages tonight <b id="pn">0</b></span><button class="st" id="pl" aria-label="One page more">+</button></div>
+  </div>
   <div class="rule"></div>
+  <div class="col bay">
   <div class="week" id="wk" aria-label="Minutes read, last seven nights" role="img"></div>
   <div class="foot" id="ft">Seven nights of candles</div>
+  </div>
 </div>
 <script>
 (function(){
