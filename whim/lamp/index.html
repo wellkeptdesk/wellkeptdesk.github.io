@@ -99,11 +99,11 @@ body{container-type:size;font-family:Corm,Georgia,serif;color:var(--parch);-webk
   function week(){var wk=document.getElementById('wk'),h='',n=new Date(),tot=0,lbl=[];
     if(n.getHours()<5)n.setDate(n.getDate()-1);
     for(var i=6;i>=0;i--){var d=new Date(n);d.setDate(n.getDate()-i);var k=key(d),e=S.log[k],m=e?e.min:0;tot+=m;
-      var hgt=Math.min(40,Math.round(m/90*40));lbl.push(m?Math.round(m)+' min':'none');
+      var hgt=Math.min(40,Math.round(m/90*40));lbl.push(m?(m<1?'under 1 min':Math.round(m)+' min'):'none');
       h+='<div class="c'+(i===0?' today':'')+'">'+(m?'<svg viewBox="0 0 12 16" aria-hidden="true"><path d="M6 0C9 5 11 8 6 16C1 8 3 5 6 0Z" fill="var(--crim)"/><path d="M6 6C8 9 8 11 6 15C4 11 4 9 6 6Z" fill="var(--gold2)"/></svg>':'<svg viewBox="0 0 12 16" aria-hidden="true"></svg>')+'<i style="height:'+(m?Math.max(6,hgt):3)+'px;opacity:'+(m?.9:.25)+'"></i><span>'+'MTWTFSS'[(d.getDay()+6)%7]+'</span></div>'}
     wk.innerHTML=h;wk.setAttribute('aria-label','Minutes read, last seven nights: '+lbl.join(', '));
     document.getElementById('pn').textContent=today().pages;foot(tot)}
-  function foot(tot){document.getElementById('ft').textContent=!ok?'Not saved: storage is blocked here':(tot?Math.round(tot)+' minutes by candlelight this week':'Seven nights of candles')}
+  function foot(tot){document.getElementById('ft').textContent=!ok?'Not saved: storage is blocked here':(tot>=1?Math.round(tot)+' minutes by candlelight this week':tot>0?'Under a minute by candlelight this week':'Seven nights of candles')}
   setBtn();tick();week();setInterval(tick,1000);
 })();
 </script>
