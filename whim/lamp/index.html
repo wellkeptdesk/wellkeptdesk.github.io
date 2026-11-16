@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Reading lamp</title>
+<style>
+@font-face{font-family:Uncial;src:url(../fonts/uncial-antiqua-latin-400-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Corm;src:url(../../kit/fonts/cormorant-garamond-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:Corm;src:url(../../kit/fonts/cormorant-garamond-latin-500-italic.woff2) format("woff2");font-weight:500;font-style:italic;font-display:swap}
+/* Whimsigothic reading lamp. Class B: local interactive, saved in this browser only, never reads Notion.
+   Tokens: DI 10.5 Whimsigothic palette (COLOR_INTELLIGENCE/PALETTE_LIBRARY/whimsigothic.md). */
+:root{--page:#191919;--night:#141A2E;--night2:#1E2742;--gold:#D9B56C;--gold2:#F1D99A;--parch:#EFE6D2;--mute:#A99C82;--crim:#B23A33;--line:#3A4160}
+:root[data-theme="light"]{--page:#FFFFFF}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--page)}
+body{font-family:Corm,Georgia,serif;color:var(--parch);-webkit-font-smoothing:antialiased;font-variant-numeric:lining-nums tabular-nums;display:flex;justify-content:center;padding:6px 4px}
+.arch{width:100%;max-width:420px;min-height:100%;background:var(--night);border:1.5px solid var(--gold);border-radius:210px 210px 6px 6px;padding:34px 26px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.moon{width:92px;height:92px}
+.ph{font-family:Uncial,serif;font-size:15px;color:var(--gold2);letter-spacing:.02em}
+.sub{font-style:italic;font-size:15px;color:var(--mute)}
+.t{font-size:44px;font-weight:500;letter-spacing:.02em;line-height:1;color:var(--parch)}
+.btn{font:inherit;font-family:Uncial,serif;font-size:14px;color:var(--night);background:var(--gold);border:0;border-radius:999px;padding:9px 22px;cursor:pointer}
+.btn.on{background:transparent;color:var(--gold2);box-shadow:inset 0 0 0 1.5px var(--gold)}
+.btn:focus-visible,.st:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+.pg{display:flex;align-items:center;gap:14px;font-size:17px}
+.st{width:30px;height:30px;border-radius:50%;border:0;background:transparent;box-shadow:inset 0 0 0 1.5px var(--gold);color:var(--gold2);font:inherit;font-size:20px;line-height:1;cursor:pointer}
+.pg b{font-weight:500;min-width:2.2em;font-size:22px;color:var(--parch)}
+.rule{width:70%;height:1px;background:var(--line);margin:2px 0}
+.week{display:flex;gap:10px;align-items:flex-end;height:64px}
+.c{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--mute)}
+.c i{display:block;width:8px;background:var(--parch);border-radius:2px 2px 0 0;opacity:.9}
+.c svg{width:12px;height:16px}
+.c.today span{color:var(--gold2)}
+.foot{font-size:13px;font-style:italic;color:var(--mute)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="arch">
+  <svg class="moon" id="moon" viewBox="-50 -50 100 100" role="img" aria-labelledby="ph"></svg>
+  <div><div class="ph" id="ph">—</div><div class="sub" id="lit">—</div></div>
+  <div class="t" id="t" aria-live="off">0:00:00</div>
+  <button class="btn" id="go" aria-pressed="false">Light the lamp</button>
+  <div class="pg"><button class="st" id="mn" aria-label="One page fewer">−</button><span>Pages tonight <b id="pn">0</b></span><button class="st" id="pl" aria-label="One page more">+</button></div>
+  <div class="rule"></div>
+  <div class="week" id="wk" aria-label="Minutes read, last seven nights" role="img"></div>
+  <div class="foot" id="ft">Seven nights of candles</div>
+</div>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search),th=q.get('theme');
+  if(th==='light'||th==='dark')document.documentElement.dataset.theme=th;
+  else if(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';
+  var demo=q.get('demo')==='1',KEY='whim-lamp-v1',ok=true,S={log:{},run:null};
+  try{S=JSON.parse(localStorage.getItem(KEY)||'null')||S}catch(e){ok=false}
+  S.log=S.log||{};
+  function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  // a "night" runs until 05:00, so reading after midnight counts for the evening before
+  function nightOf(t){var d=new Date(t);if(d.getHours()<5)d.setDate(d.getDate()-1);return key(d)}
+  if(demo){S={log:{},run:null};var m=[35,0,52,20,64,41],n=new Date();m.forEach(function(v,i){var d=new Date(n);d.setDate(n.getDate()-(6-i));if(v)S.log[key(d)]={min:v,pages:Math.round(v*.6)}});S.log[nightOf(Date.now())]={min:24,pages:14}}
+  function save(){if(demo||!ok)return;var ks=Object.keys(S.log).sort();while(ks.length>90)delete S.log[ks.shift()];try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){ok=false;foot()}}
+  function today(){var k=nightOf(Date.now());return S.log[k]||(S.log[k]={min:0,pages:0})}
+  // moon phase: mean synodic month from the new moon of 2000-01-06 18:14 UTC (accurate to about a day)
+  var syn=29.530588853,p=(((Date.now()-Date.UTC(2000,0,6,18,14))/864e5)/syn)%1;if(p<0)p+=1;
+  var lit=(1-Math.cos(2*Math.PI*p))/2;
+  var names=['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
+  var name=names[Math.floor((p*8+0.5))%8];
+  document.getElementById('ph').textContent=name;
+  document.getElementById('lit').textContent=Math.round(lit*100)+'% lit tonight';
+  (function(){var r=44,c=Math.cos(2*Math.PI*p),rx=Math.abs(c)*r,wax=p<.5,
+    // lit limb on the right while waxing, on the left while waning
+    d='M0 '+(-r)+' A'+r+' '+r+' 0 0 '+(wax?1:0)+' 0 '+r+' A'+rx.toFixed(2)+' '+r+' 0 0 '+((c>0)===wax?0:1)+' 0 '+(-r)+' Z';
+    document.getElementById('moon').innerHTML='<circle r="'+r+'" fill="var(--night2)" stroke="var(--line)" stroke-width="1.5"/><path d="'+d+'" fill="var(--gold2)"/>'})();
+  var go=document.getElementById('go'),tEl=document.getElementById('t');
+  function fmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+  function tick(){var base=today().min*60,extra=S.run?(Date.now()-S.run)/1000:0;tEl.textContent=fmt(base+extra)}
+  function setBtn(){var on=!!S.run;go.textContent=on?'Snuff the lamp':'Light the lamp';go.className='btn'+(on?' on':'');go.setAttribute('aria-pressed',String(on))}
+  go.onclick=function(){if(S.run){var add=(Date.now()-S.run)/60000;S.log[nightOf(S.run)]=S.log[nightOf(S.run)]||{min:0,pages:0};S.log[nightOf(S.run)].min=Math.round((S.log[nightOf(S.run)].min+add)*100)/100;S.run=null}else S.run=Date.now();save();setBtn();tick();week()};
+  function pages(dv){var t=today();t.pages=Math.max(0,t.pages+dv);document.getElementById('pn').textContent=t.pages;save();week()}
+  document.getElementById('pl').onclick=function(){pages(1)};document.getElementById('mn').onclick=function(){pages(-1)};
+  function week(){var wk=document.getElementById('wk'),h='',n=new Date(),tot=0,lbl=[];
+    if(n.getHours()<5)n.setDate(n.getDate()-1);
+    for(var i=6;i>=0;i--){var d=new Date(n);d.setDate(n.getDate()-i);var k=key(d),e=S.log[k],m=e?e.min:0;tot+=m;
+      var hgt=Math.min(40,Math.round(m/90*40));lbl.push(m?Math.round(m)+' min':'none');
+      h+='<div class="c'+(i===0?' today':'')+'">'+(m?'<svg viewBox="0 0 12 16" aria-hidden="true"><path d="M6 0C9 5 11 8 6 16C1 8 3 5 6 0Z" fill="var(--crim)"/><path d="M6 6C8 9 8 11 6 15C4 11 4 9 6 6Z" fill="var(--gold2)"/></svg>':'<svg viewBox="0 0 12 16" aria-hidden="true"></svg>')+'<i style="height:'+(m?Math.max(6,hgt):3)+'px;opacity:'+(m?.9:.25)+'"></i><span>'+'MTWTFSS'[(d.getDay()+6)%7]+'</span></div>'}
+    wk.innerHTML=h;wk.setAttribute('aria-label','Minutes read, last seven nights: '+lbl.join(', '));
+    document.getElementById('pn').textContent=today().pages;foot(tot)}
+  function foot(tot){document.getElementById('ft').textContent=!ok?'Not saved: storage is blocked here':(tot?Math.round(tot)+' minutes by candlelight this week':'Seven nights of candles')}
+  setBtn();tick();week();setInterval(tick,1000);
+})();
+</script>
+</body>
+</html>
