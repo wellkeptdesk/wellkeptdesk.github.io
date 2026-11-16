@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Signal check</title>
+<style>
+@font-face{font-family:Michroma;src:url(../fonts/michroma-latin-400-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Plex;src:url(../../kit/fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Plex;src:url(../../kit/fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+/* Cybercore signal check. Class B: local interactive, saved in this browser only, never reads Notion.
+   Tokens: DI 8.0 Cybercore palette (COLOR_INTELLIGENCE/PALETTE_LIBRARY/cybercore.md). */
+:root{--ground:#191919;--ink:#E4ECF3;--hud:#78C7FD;--mute:#72899D;--seg:#2867E4;--line:#273442;--acid:#E2E92B;--led-edge:#191919}
+:root[data-theme="light"]{--ground:#FFFFFF;--ink:#0E1624;--hud:#1F55C8;--mute:#5A6E80;--seg:#2867E4;--line:#D5DEE8;--acid:#E2E92B;--led-edge:#0E1624}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--ground)}
+body{font-family:Plex,ui-monospace,Menlo,monospace;color:var(--ink);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;container-type:inline-size}
+.w{min-height:100%;padding:14px 4px 10px;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:8px;font-size:11px;letter-spacing:.14em;color:var(--mute)}
+.top b{font-weight:500;color:var(--hud);font-size:13px;letter-spacing:.08em}
+.row{display:grid;grid-template-columns:92px auto 44px 1fr;align-items:center;gap:12px}
+.lab{font-family:Michroma,Plex,sans-serif;font-size:11px;letter-spacing:.06em}
+.segs{display:flex;gap:4px}
+.s{width:22px;height:14px;border:0;padding:0;border-radius:7px;background:transparent;box-shadow:inset 0 0 0 1.5px var(--mute);cursor:pointer}
+.s[aria-pressed="true"]{background:var(--seg);box-shadow:none}
+.s:focus-visible{outline:2px solid var(--hud);outline-offset:2px}
+.val{font-size:13px;font-weight:500;color:var(--hud);text-align:right}
+.val.e{color:var(--mute)}
+svg{width:100%;height:30px;display:block;overflow:visible}
+svg .base{stroke:var(--line);stroke-width:1}
+svg .tr{fill:none;stroke:var(--hud);stroke-width:1.5;vector-effect:non-scaling-stroke}
+svg .pt{fill:var(--acid);stroke:var(--led-edge);stroke-width:1.5}
+.foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:8px;font-size:11px;letter-spacing:.1em;color:var(--mute)}
+.led{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:-1px;box-shadow:inset 0 0 0 1.5px var(--mute)}
+.led.on{background:var(--acid);box-shadow:inset 0 0 0 1.5px var(--led-edge)}
+@container (max-width:430px){.row{grid-template-columns:72px auto 36px;row-gap:4px}.row svg{grid-column:1/-1}.lab{font-size:10px}.s{width:20px}}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="top"><span id="day">DAY ---</span><b id="clk">--:--:--</b></div>
+  <div id="rows"></div>
+  <div class="foot"><span><i class="led" id="led"></i><span id="st">0/3 LOGGED</span></span><span>14 DAYS</span></div>
+</div>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), th=q.get('theme');
+  if(th==='light'||th==='dark')document.documentElement.dataset.theme=th;
+  else if(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';
+  var demo=q.get('demo')==='1', KEY='cyber-signal-v1', ok=true, all={};
+  try{all=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){ok=false}
+  function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  var now=new Date(), today=key(now), days=[];
+  for(var i=13;i>=0;i--){var d=new Date(now);d.setDate(now.getDate()-i);days.push(key(d))}
+  if(demo){all={};var seed=[[3,4,3],[4,4,4],[2,3,3],[3,2,2],[4,5,4],[5,4,4],[3,3,4],[2,2,3],[3,4,3],[4,4,5],[4,3,4],[3,3,3],[4,5,4],[4,3,4]];
+    days.forEach(function(k,i){var v=seed[i];if(v[0])all[k]={e:v[0],f:v[1],m:v[2]}})}
+  var CH=[['e','ENERGY'],['f','FOCUS'],['m','MOOD']];
+  var start=new Date(now.getFullYear(),0,0), doy=Math.floor((now-start)/864e5);
+  document.getElementById('day').textContent='DAY '+String(doy).padStart(3,'0')+' / SIGNAL CHECK';
+  function save(){if(demo||!ok)return;var ks=Object.keys(all).sort();while(ks.length>60)delete all[ks.shift()];try{localStorage.setItem(KEY,JSON.stringify(all))}catch(e){ok=false;status()}}
+  var rows=document.getElementById('rows');rows.style.display='grid';rows.style.gap='10px';
+  CH.forEach(function(c){
+    var r=document.createElement('div');r.className='row';
+    var l=document.createElement('span');l.className='lab';l.textContent=c[1];l.id='l-'+c[0];r.appendChild(l);
+    var sg=document.createElement('div');sg.className='segs';sg.setAttribute('role','group');sg.setAttribute('aria-labelledby','l-'+c[0]);
+    for(var v=1;v<=5;v++){(function(v){var b=document.createElement('button');b.className='s';b.setAttribute('aria-label',c[1].toLowerCase()+' '+v+' of 5');
+      b.onclick=function(){var t=all[today]||(all[today]={});t[c[0]]=(t[c[0]]===v?undefined:v);if(t[c[0]]===undefined)delete t[c[0]];if(!Object.keys(t).length)delete all[today];save();draw()};sg.appendChild(b)})(v)}
+    r.appendChild(sg);
+    var val=document.createElement('span');val.className='val';val.id='v-'+c[0];r.appendChild(val);
+    var ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('aria-hidden','true');svg.id='t-'+c[0];r.appendChild(svg);
+    rows.appendChild(r)});
+  function draw(){
+    var n=0;
+    CH.forEach(function(c){var t=(all[today]||{})[c[0]]||0;if(t)n++;
+      document.querySelectorAll('#l-'+c[0]+' + .segs .s').forEach(function(b,i){b.setAttribute('aria-pressed',String(i<t))});
+      var v=document.getElementById('v-'+c[0]);v.textContent=t?t+'/5':'--';v.className='val'+(t?'':' e');
+      var svg=document.getElementById('t-'+c[0]),W=Math.max(60,svg.clientWidth||130),sx=(W-6)/13,pts=[],last=null,h='<line class="base" x1="0" y1="29" x2="'+W+'" y2="29"/>';svg.setAttribute('viewBox','0 0 '+W+' 30');
+      days.forEach(function(k,i){var x=3+i*sx,y=all[k]&&all[k][c[0]];if(y){pts.push(x+','+(29-(y-1)*6.5));last=[x,29-(y-1)*6.5]}});
+      if(pts.length>1)h+='<polyline class="tr" points="'+pts.join(' ')+'"/>';
+      if(last&&days[13]===today&&t)h+='<circle class="pt" cx="'+last[0]+'" cy="'+last[1]+'" r="3"/>';
+      svg.innerHTML=h});
+    document.getElementById('led').className='led'+(n===3?' on':'');status(n)}
+  function status(n){document.getElementById('st').textContent=!ok?'NOT SAVED: STORAGE BLOCKED':(n===undefined?'':n+'/3 LOGGED'+(n===3?' · SYS OK':''))}
+  function tick(){var d=new Date();document.getElementById('clk').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(x){return String(x).padStart(2,'0')}).join(':')}
+  tick();setInterval(tick,1000);draw();window.addEventListener('resize',draw);
+})();
+</script>
+</body>
+</html>
