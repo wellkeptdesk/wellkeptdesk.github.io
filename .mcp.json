@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "notion-arena": {
+      "command": "npx",
+      "args": ["-y", "notion-arena-mcp@0.2.2"]
+    }
+  }
+}
